@@ -1,7 +1,10 @@
 const ap = new APlayer({
     container: document.getElementById('aplayer'),
     fixed: true,
-    autoplay: true,
+    autoplay: false,
+	preload: 'none',
+	mutex: true,
+	mini: false,
     audio: [
 	  {
         name: '勇气',
