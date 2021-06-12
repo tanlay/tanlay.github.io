@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta property="og:type" content="website">
@@ -118,9 +118,24 @@
     <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
         <li class="menu-item menu-item-archives">
 
     <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
   </ul>
@@ -174,7 +189,7 @@
               目前共计 34 个标签
             </div>
             <div class="tag-cloud-tags">
-              <a href="/tags/Ansible/" style="font-size: 18px; color: #8e8e8e">Ansible</a> <a href="/tags/CURL/" style="font-size: 12px; color: #ccc">CURL</a> <a href="/tags/Docker/" style="font-size: 18px; color: #8e8e8e">Docker</a> <a href="/tags/Firewalld/" style="font-size: 12px; color: #ccc">Firewalld</a> <a href="/tags/Haproxy/" style="font-size: 12px; color: #ccc">Haproxy</a> <a href="/tags/Jenkins/" style="font-size: 12px; color: #ccc">Jenkins</a> <a href="/tags/K8S/" style="font-size: 18px; color: #8e8e8e">K8S</a> <a href="/tags/Kafka/" style="font-size: 12px; color: #ccc">Kafka</a> <a href="/tags/Keepalived/" style="font-size: 18px; color: #8e8e8e">Keepalived</a> <a href="/tags/LVM/" style="font-size: 12px; color: #ccc">LVM</a> <a href="/tags/Linux/" style="font-size: 12px; color: #ccc">Linux</a> <a href="/tags/Mongo/" style="font-size: 12px; color: #ccc">Mongo</a> <a href="/tags/MySQL/" style="font-size: 12px; color: #ccc">MySQL</a> <a href="/tags/Nginx/" style="font-size: 18px; color: #8e8e8e">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 30px; color: #111">NoSQL</a> <a href="/tags/Oracle/" style="font-size: 12px; color: #ccc">Oracle</a> <a href="/tags/Postgresql/" style="font-size: 18px; color: #8e8e8e">Postgresql</a> <a href="/tags/RAID/" style="font-size: 12px; color: #ccc">RAID</a> <a href="/tags/Redis/" style="font-size: 24px; color: #4f4f4f">Redis</a> <a href="/tags/RocketMQ/" style="font-size: 12px; color: #ccc">RocketMQ</a> <a href="/tags/SFTP/" style="font-size: 12px; color: #ccc">SFTP</a> <a href="/tags/SSH/" style="font-size: 12px; color: #ccc">SSH</a> <a href="/tags/Shell/" style="font-size: 18px; color: #8e8e8e">Shell</a> <a href="/tags/Squid/" style="font-size: 12px; color: #ccc">Squid</a> <a href="/tags/VIM/" style="font-size: 12px; color: #ccc">VIM</a> <a href="/tags/Zookeeper/" style="font-size: 12px; color: #ccc">Zookeeper</a> <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" style="font-size: 12px; color: #ccc">异常处理</a> <a href="/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/" style="font-size: 12px; color: #ccc">权限管理</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/" style="font-size: 18px; color: #8e8e8e">系统优化</a> <a href="/tags/%E7%BD%91%E5%8D%A1Bond/" style="font-size: 12px; color: #ccc">网卡Bond</a> <a href="/tags/%E7%BD%91%E5%8D%A1%E9%85%8D%E7%BD%AE/" style="font-size: 12px; color: #ccc">网卡配置</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/" style="font-size: 18px; color: #8e8e8e">网络测试</a> <a href="/tags/%E9%98%B2%E7%81%AB%E5%A2%99/" style="font-size: 12px; color: #ccc">防火墙</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 12px; color: #ccc">高可用</a>
+              <a href="/tags/Ansible/" style="font-size: 18px; color: #d854c3">Ansible</a> <a href="/tags/CURL/" style="font-size: 12px; color: #ff69b4">CURL</a> <a href="/tags/Docker/" style="font-size: 18px; color: #d854c3">Docker</a> <a href="/tags/Firewalld/" style="font-size: 12px; color: #ff69b4">Firewalld</a> <a href="/tags/Haproxy/" style="font-size: 12px; color: #ff69b4">Haproxy</a> <a href="/tags/Jenkins/" style="font-size: 12px; color: #ff69b4">Jenkins</a> <a href="/tags/K8S/" style="font-size: 18px; color: #d854c3">K8S</a> <a href="/tags/Kafka/" style="font-size: 12px; color: #ff69b4">Kafka</a> <a href="/tags/Keepalived/" style="font-size: 18px; color: #d854c3">Keepalived</a> <a href="/tags/LVM/" style="font-size: 12px; color: #ff69b4">LVM</a> <a href="/tags/Linux/" style="font-size: 12px; color: #ff69b4">Linux</a> <a href="/tags/Mongo/" style="font-size: 12px; color: #ff69b4">Mongo</a> <a href="/tags/MySQL/" style="font-size: 12px; color: #ff69b4">MySQL</a> <a href="/tags/Nginx/" style="font-size: 18px; color: #d854c3">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 30px; color: #8a2be2">NoSQL</a> <a href="/tags/Oracle/" style="font-size: 12px; color: #ff69b4">Oracle</a> <a href="/tags/Postgresql/" style="font-size: 18px; color: #d854c3">Postgresql</a> <a href="/tags/RAID/" style="font-size: 12px; color: #ff69b4">RAID</a> <a href="/tags/Redis/" style="font-size: 24px; color: #b140d3">Redis</a> <a href="/tags/RocketMQ/" style="font-size: 12px; color: #ff69b4">RocketMQ</a> <a href="/tags/SFTP/" style="font-size: 12px; color: #ff69b4">SFTP</a> <a href="/tags/SSH/" style="font-size: 12px; color: #ff69b4">SSH</a> <a href="/tags/Shell/" style="font-size: 18px; color: #d854c3">Shell</a> <a href="/tags/Squid/" style="font-size: 12px; color: #ff69b4">Squid</a> <a href="/tags/VIM/" style="font-size: 12px; color: #ff69b4">VIM</a> <a href="/tags/Zookeeper/" style="font-size: 12px; color: #ff69b4">Zookeeper</a> <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" style="font-size: 12px; color: #ff69b4">异常处理</a> <a href="/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/" style="font-size: 12px; color: #ff69b4">权限管理</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96/" style="font-size: 18px; color: #d854c3">系统优化</a> <a href="/tags/%E7%BD%91%E5%8D%A1Bond/" style="font-size: 12px; color: #ff69b4">网卡Bond</a> <a href="/tags/%E7%BD%91%E5%8D%A1%E9%85%8D%E7%BD%AE/" style="font-size: 12px; color: #ff69b4">网卡配置</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/" style="font-size: 18px; color: #d854c3">网络测试</a> <a href="/tags/%E9%98%B2%E7%81%AB%E5%A2%99/" style="font-size: 12px; color: #ff69b4">防火墙</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 12px; color: #ff69b4">高可用</a>
             </div>
           </div>
         
@@ -257,11 +272,13 @@
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
+          
         <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
+          
         <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
@@ -309,6 +326,26 @@
   </div>
 
         
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
@@ -323,6 +360,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -336,6 +374,65 @@
 
 <script src="/js/next-boot.js"></script>
 
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
 
 
@@ -355,9 +452,13 @@
 
 
 
+    <div id="pjax">
   
 
   
 
+  
+
+    </div>
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"live2d-widget-model-wanko"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"tagMode":false});</script></body>
 </html>
