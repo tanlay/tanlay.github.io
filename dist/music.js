@@ -2,9 +2,9 @@ const ap = new APlayer({
     container: document.getElementById('aplayer'),
     fixed: true,
     autoplay: false,
-	preload: 'none',
 	mutex: true,
 	mini: false,
+	listFolded: true,
     audio: [
 	  {
         name: '勇气',
