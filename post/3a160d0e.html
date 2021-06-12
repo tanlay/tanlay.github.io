@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;right&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script><script src="/js/config.js"></script>
+<meta name="description" content="作为一名运维工程师，一定要明确解决问题的思路，当遇到各种问题，才能快速定位并解决问题。需要重视错误提示，善于查看日志文件，这样才能快速定位并解决问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux服务器异常案例集合">
+<meta property="og:url" content="http://example.com/post/3a160d0e.html">
+<meta property="og:site_name" content="Tanlay">
+<meta property="og:description" content="作为一名运维工程师，一定要明确解决问题的思路，当遇到各种问题，才能快速定位并解决问题。需要重视错误提示，善于查看日志文件，这样才能快速定位并解决问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T13:47:55.000Z">
+<meta property="article:modified_time" content="2021-06-11T07:25:47.433Z">
+<meta property="article:author" content="tanlay">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="异常处理">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/post/3a160d0e.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;post&#x2F;3a160d0e.html&quot;,&quot;path&quot;:&quot;post&#x2F;3a160d0e.html&quot;,&quot;title&quot;:&quot;Linux服务器异常案例集合&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Linux服务器异常案例集合 | Tanlay</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/love.js"></script>
+
+<link rel="alternate" href="/atom.xml" title="Tanlay" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Tanlay</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不忘初心,勇往直前</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux%E5%A4%87%E4%BB%BD%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9D%83%E9%99%90"><span class="nav-number">1.</span> <span class="nav-text">Linux备份文件系统权限</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD-home-test%E7%9B%AE%E5%BD%95%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E5%88%B0chmod-txt%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">备份&#x2F;home&#x2F;test目录的所有文件目录权限到chmod.txt文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BB%8Echmod-txt%E6%96%87%E4%BB%B6%E4%B8%AD%E6%81%A2%E5%A4%8D%E6%9D%83%E9%99%90"><span class="nav-number">1.2.</span> <span class="nav-text">从chmod.txt文件中恢复权限</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%B0%E4%B8%80%E6%AC%A1df-h-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E8%A2%AB%E5%8D%A1%E4%BD%8F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">记一次df -h 命令执行被卡住的问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Read-only-filesystem"><span class="nav-number">3.</span> <span class="nav-text">Read-only filesystem</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Centos%E5%AE%89%E8%A3%85vmware%E4%B8%8D%E8%83%BD%E6%AD%A3%E5%B8%B8%E4%BD%BF%E7%94%A8%E3%80%82%E6%9C%89%E5%8F%AF%E8%83%BD%E6%98%AF%E5%9B%A0%E4%B8%BA%E6%9F%90%E4%BA%9B%E6%A8%A1%E5%9D%97%E6%B2%A1%E6%9C%89%E7%BC%96%E8%AF%91%E3%80%82"><span class="nav-number">4.</span> <span class="nav-text">Centos安装vmware不能正常使用。有可能是因为某些模块没有编译。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#MySQL%E9%87%8D%E5%90%AF%E6%8A%A5%E9%94%99"><span class="nav-number">5.</span> <span class="nav-text">MySQL重启报错</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanlay"
+      src="/images/pkq.jpg">
+  <p class="site-author-name" itemprop="name">tanlay</p>
+  <div class="site-description" itemprop="description">Tanlay的学习记录</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanlay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanlay" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:18313178130@163.com" title="E-Mail → mailto:18313178130@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/3a160d0e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/pkq.jpg">
+      <meta itemprop="name" content="tanlay">
+      <meta itemprop="description" content="Tanlay的学习记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tanlay">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux服务器异常案例集合
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-10 21:47:55" itemprop="dateCreated datePublished" datetime="2021-06-10T21:47:55+08:00">2021-06-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-11 15:25:47" itemprop="dateModified" datetime="2021-06-11T15:25:47+08:00">2021-06-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">系统管理</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>作为一名运维工程师，一定要明确解决问题的思路，当遇到各种问题，才能快速定位并解决问题。需要重视错误提示，善于查看日志文件，这样才能快速定位并解决问题。</p>
+<span id="more"></span>
+
+<hr>
+<h5 id="Linux备份文件系统权限"><a href="#Linux备份文件系统权限" class="headerlink" title="Linux备份文件系统权限"></a>Linux备份文件系统权限</h5><p>chmod和chown命令可以更改目录或文件的权限和属组。如果处理不当，会产生和rm一样的效果。可以使用一种比较霸道的方式。在执行chmod、chown前，先把所有文件、目录的权限备份下，待恢复时可以直接恢复。</p>
+<h6 id="备份-home-test目录的所有文件目录权限到chmod-txt文件"><a href="#备份-home-test目录的所有文件目录权限到chmod-txt文件" class="headerlink" title="备份/home/test目录的所有文件目录权限到chmod.txt文件"></a>备份/home/test目录的所有文件目录权限到chmod.txt文件</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getfacl -R /home/test/ &gt; chmod.txt</span><br></pre></td></tr></table></figure>
+<h6 id="从chmod-txt文件中恢复权限"><a href="#从chmod-txt文件中恢复权限" class="headerlink" title="从chmod.txt文件中恢复权限"></a>从chmod.txt文件中恢复权限</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setfacl --restore=chmod.txt</span><br></pre></td></tr></table></figure>
+<h5 id="记一次df-h-命令执行被卡住的问题"><a href="#记一次df-h-命令执行被卡住的问题" class="headerlink" title="记一次df -h 命令执行被卡住的问题"></a>记一次df -h 命令执行被卡住的问题</h5><p>磁盘空间告警，登录服务器使用df -h命令查询磁盘空间,发现命令一直执行但是不返回结果，赶紧执行一下strace df跟踪一下系统调用.发现卡在了nfs挂载上，原因是nfs服务器死机了。</p>
+<ol>
+<li>使用strace df，发现卡在nfs上</li>
+<li>取消挂载nfs盘，问题还未解决</li>
+<li>重启nfs服务端，再次验证成功</li>
+</ol>
+<hr>
+<h5 id="Read-only-filesystem"><a href="#Read-only-filesystem" class="headerlink" title="Read-only filesystem"></a>Read-only filesystem</h5><p>企业服务器运维中，经常会发现操作系统的分区变成只读文件系统，错误提示信息为“Read-only filesystem”，出现只读文件系统，会导致只能读取，而无法写入新文件、新数据等操作。<br>造成该问题的原因包括：磁盘老旧长期大量的读写、文件系统文件被破坏、磁盘碎片文件、异常断电、读写中断等等。</p>
+<p>以CentOS 7 Linux为案例，来修复文件系统，步骤如下：</p>
+<ol>
+<li><p>远程备份本地重要数据。<br>出现只读文件系统，需先备份其他重要数据，基于rsync|scp远程备份，/data为源目录，/backup/2018/为目标备份目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rsync -av /data/ root@192.168.21.98:/backup/2017/</span><br><span class="line">mount -o remount,rw /</span><br></pre></td></tr></table></figure></li>
+<li><p>如果重新挂载/系统无法解决问题，则需重启服务器<br>以CD/DVD光盘引导进入Linux Rescue修复模式，如图所示，光标选择“Troubleshooting”,按Enter键，然后选择“Rescue a CentOS system”，按Enter键。</p>
+</li>
+</ol>
+<p>光盘引导进入修复模式，</p>
+<ul>
+<li>选择Continue继续进入系统</li>
+<li>登录修复模式，执行如下命令，df –h显示原来的文件系统</li>
+<li>更改root目录<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chroot /mnt/sysimage</span><br><span class="line">df -h</span><br></pre></td></tr></table></figure></li>
+<li>切换原分区目录<br>对有异常的分区进行检测并修复，根据文件系统类型，执行相应的命令如下：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">umount /dev/sda3</span><br><span class="line">fsck.ext4 /dev/sda3 –y</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ol start="3">
+<li>修复完成之后，重启系统即可<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h5 id="Centos安装vmware不能正常使用。有可能是因为某些模块没有编译。"><a href="#Centos安装vmware不能正常使用。有可能是因为某些模块没有编译。" class="headerlink" title="Centos安装vmware不能正常使用。有可能是因为某些模块没有编译。"></a>Centos安装vmware不能正常使用。有可能是因为某些模块没有编译。</h5><ol>
+<li>Could not open /dev/vmmon</li>
+</ol>
+<p>安装界面可以打开，启动虚拟机时报错Could not open /dev/vmmon，是因为没有编译vmmon模块</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd /tmp</span><br><span class="line">tar xvf /usr/lib/vmware/modules/source/vmmon.tar</span><br><span class="line">cd vmmon-only</span><br><span class="line">make</span><br><span class="line">cp vmmon.ko /lib/modules/2.6.32-504.el6.x86_64/misc/vmmon.ko</span><br><span class="line">modprobe vmmon</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>打不开网络配置器vmware-ntcfg</li>
+</ol>
+<p>点击网络设置没反应，命令使用vmware-ntecfg也没反应。因为没有编译vmnet模块</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd /tmp</span><br><span class="line">tar xvf /usr/lib/vmware/modules/source/vmnet.tar</span><br><span class="line">cd vmnet-only</span><br><span class="line">make</span><br><span class="line">cp vmnet.ko /lib/modules/2.6.32-504.el6.x86_64/misc/vmnet.ko</span><br><span class="line">modprobe vmnet</span><br></pre></td></tr></table></figure>
+
+<h5 id="MySQL重启报错"><a href="#MySQL重启报错" class="headerlink" title="MySQL重启报错"></a>MySQL重启报错</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Redirecting to /bin/systemctl restart mariadb</span><br><span class="line">Job for mariadb.service failed because the control process exited with error code. See &quot;systemctl status mariadb.service&quot; and &quot;journalctl -xe&quot; for details.</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<ul>
+<li>journalctl –xe查看MYSQL错误信息</li>
+<li>关闭服务器selinux安全策略，setenforce 0</li>
+<li>检查MYSQL|Mariadb通过什么样的方式部署的</li>
+<li>检查其配置文件/etc/my.cnf，datadir数据目录是否配置</li>
+<li>确认数据库的数据目录mysql用户是否拥有读写权限</li>
+<li>检查数据库目录是否初始化，是否包括mysql、test基础库</li>
+<li>检查socket文件所在的路径，是否存在socket文件，权限是否正确</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="tag"># 异常处理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/31f702e9.html" rel="prev" title="SSH配置优化">
+                  <i class="fa fa-chevron-left"></i> SSH配置优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/fcbe39de.html" rel="next" title="curl命令的使用">
+                  curl命令的使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanlay</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">200k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:02</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"live2d-widget-model-wanko"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"tagMode":false});</script></body>
+</html>

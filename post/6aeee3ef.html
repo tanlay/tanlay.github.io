@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;right&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script><script src="/js/config.js"></script>
+<meta name="description" content="日志主要包括系统日志、应用程序日志和安全日志。系统运维和开发人员可以通过日志了解服务器软硬件信息、检查配置过程中的错误及错误发生的原因。经常分析日志可以了解服务器的负荷，性能安全性，从而及时采取措施纠正错误。通常，日志被分散的储存不同的设备上。如果你管理数十上百台服务器，你还在使用依次登录每台机器的传统方法查阅日志。这样是不是感觉很繁琐和效率低下。当务之急我们使用集中化的日志管理，例如：开源的sy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ansible部署ELK+Filebeat+kafka+Zookeeper">
+<meta property="og:url" content="http://example.com/post/6aeee3ef.html">
+<meta property="og:site_name" content="Tanlay">
+<meta property="og:description" content="日志主要包括系统日志、应用程序日志和安全日志。系统运维和开发人员可以通过日志了解服务器软硬件信息、检查配置过程中的错误及错误发生的原因。经常分析日志可以了解服务器的负荷，性能安全性，从而及时采取措施纠正错误。通常，日志被分散的储存不同的设备上。如果你管理数十上百台服务器，你还在使用依次登录每台机器的传统方法查阅日志。这样是不是感觉很繁琐和效率低下。当务之急我们使用集中化的日志管理，例如：开源的sy">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T14:38:15.000Z">
+<meta property="article:modified_time" content="2021-06-11T07:30:51.278Z">
+<meta property="article:author" content="tanlay">
+<meta property="article:tag" content="Ansible">
+<meta property="article:tag" content="Kafka">
+<meta property="article:tag" content="Zookeeper">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/post/6aeee3ef.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;post&#x2F;6aeee3ef.html&quot;,&quot;path&quot;:&quot;post&#x2F;6aeee3ef.html&quot;,&quot;title&quot;:&quot;使用ansible部署ELK+Filebeat+kafka+Zookeeper&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>使用ansible部署ELK+Filebeat+kafka+Zookeeper | Tanlay</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/love.js"></script>
+
+<link rel="alternate" href="/atom.xml" title="Tanlay" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Tanlay</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不忘初心,勇往直前</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">系统环境</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9ansible%E7%9A%84hosts%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">修改ansible的hosts文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85elasticsearch"><span class="nav-number">3.</span> <span class="nav-text">安装elasticsearch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9elasticsearch%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">修改elasticsearch配置文件：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85kibana-%E5%8F%AA%E9%9C%80%E8%A6%81%E5%9C%A8%E4%B8%80%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B8%8A%E5%AE%89%E8%A3%85%E5%B0%B1%E8%A1%8C"><span class="nav-number">5.</span> <span class="nav-text">安装kibana(只需要在一台机器上安装就行)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85zookeeper%E9%9B%86%E7%BE%A4"><span class="nav-number">6.</span> <span class="nav-text">安装zookeeper集群</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85kafka%E9%9B%86%E7%BE%A4"><span class="nav-number">7.</span> <span class="nav-text">安装kafka集群</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85filebeat"><span class="nav-number">8.</span> <span class="nav-text">安装filebeat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Kafka%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">9.</span> <span class="nav-text">Kafka常用命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85logstash"><span class="nav-number">10.</span> <span class="nav-text">安装logstash</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanlay"
+      src="/images/pkq.jpg">
+  <p class="site-author-name" itemprop="name">tanlay</p>
+  <div class="site-description" itemprop="description">Tanlay的学习记录</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanlay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanlay" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:18313178130@163.com" title="E-Mail → mailto:18313178130@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/6aeee3ef.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/pkq.jpg">
+      <meta itemprop="name" content="tanlay">
+      <meta itemprop="description" content="Tanlay的学习记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tanlay">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用ansible部署ELK+Filebeat+kafka+Zookeeper
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-10 22:38:15" itemprop="dateCreated datePublished" datetime="2021-06-10T22:38:15+08:00">2021-06-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-11 15:30:51" itemprop="dateModified" datetime="2021-06-11T15:30:51+08:00">2021-06-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ELK/" itemprop="url" rel="index"><span itemprop="name">ELK</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>日志主要包括系统日志、应用程序日志和安全日志。系统运维和开发人员可以通过日志了解服务器软硬件信息、检查配置过程中的错误及错误发生的原因。经常分析日志可以了解服务器的负荷，性能安全性，从而及时采取措施纠正错误。通常，日志被分散的储存不同的设备上。如果你管理数十上百台服务器，你还在使用依次登录每台机器的传统方法查阅日志。这样是不是感觉很繁琐和效率低下。当务之急我们使用集中化的日志管理，例如：开源的syslog，将所有服务器上的日志收集汇总。集中化管理日志后，日志的统计和检索又成为一件比较麻烦的事情，一般我们使用grep、awk和wc等Linux命令能实现检索和统计，但是对于要求更高的查询、排序和统计等要求和庞大的机器数量依然使用这样的方法难免有点力不从心。</p>
+<span id="more"></span>
+
+<h5 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h5><table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP地址</th>
+<th>软件环境</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>elk01</td>
+<td>172.17.0.1</td>
+<td>zookeeper,kafka</td>
+</tr>
+<tr>
+<td>elk02</td>
+<td>172.17.0.2</td>
+<td>zookeeper,kafka</td>
+</tr>
+<tr>
+<td>elk03</td>
+<td>172.17.0.3</td>
+<td>zookeeper,kafka</td>
+</tr>
+<tr>
+<td>elk04</td>
+<td>172.17.0.4</td>
+<td>elasticsearch，logstash, kibana</td>
+</tr>
+<tr>
+<td>elk05</td>
+<td>172.17.0.5</td>
+<td>elasticsearch，logstash</td>
+</tr>
+<tr>
+<td>elk06</td>
+<td>172.17.0.6</td>
+<td>elasticsearch，logstash</td>
+</tr>
+<tr>
+<td>elk07</td>
+<td>172.17.0.7</td>
+<td>elasticsearch，logstash</td>
+</tr>
+<tr>
+<td>elk08</td>
+<td>172.17.0.8</td>
+<td>elasticsearch，logstash</td>
+</tr>
+<tr>
+<td>elk09</td>
+<td>172.17.0.9</td>
+<td>elasticsearch，logstash</td>
+</tr>
+<tr>
+<td>elk010</td>
+<td>172.17.0.10</td>
+<td>elasticsearch，logstash</td>
+</tr>
+</tbody></table>
+<h5 id="修改ansible的hosts文件"><a href="#修改ansible的hosts文件" class="headerlink" title="修改ansible的hosts文件"></a>修改ansible的hosts文件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/ansible/hosts</span></span><br><span class="line">[kafka]</span><br><span class="line">172.17.0.1</span><br><span class="line">172.17.0.2</span><br><span class="line">172.17.0.3</span><br><span class="line"></span><br><span class="line">[elk]</span><br><span class="line">172.17.0.4</span><br><span class="line">172.17.0.5</span><br><span class="line">172.17.0.6</span><br><span class="line">172.17.0.7</span><br><span class="line">172.17.0.8</span><br><span class="line">172.17.0.9</span><br><span class="line">172.17.0.10</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装elasticsearch"><a href="#安装elasticsearch" class="headerlink" title="安装elasticsearch"></a>安装elasticsearch</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible elk -m yum -a &quot;name=/opt/package/elasticsearch-6.2.4.rpm&quot;</span><br></pre></td></tr></table></figure>
+
+<h5 id="修改elasticsearch配置文件："><a href="#修改elasticsearch配置文件：" class="headerlink" title="修改elasticsearch配置文件："></a>修改elasticsearch配置文件：</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/elasticsearch/elasticsearch.yml</span></span><br><span class="line">cluster.name: test</span><br><span class="line">node.name: test-node-1</span><br><span class="line">path.data: /opt/data/elasticsearch</span><br><span class="line">path.logs: /opt/logs/elasticsearch</span><br><span class="line">bootstrap.memory_lock: false</span><br><span class="line">network.host: 172.17.0.2</span><br><span class="line">http.port: 9200</span><br><span class="line">discovery.zen.ping.unicast.hosts: [&quot;172.16.0.4&quot;,&quot;172.16.0.5&quot;,&quot;172.16.0.6&quot;,&quot;172.16.0.7&quot;,&quot;172.16.0.8&quot;,&quot;172.16.0.9&quot;，&quot;172.16.0.10&quot;]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir /opt/data/elasticsearch</span><br><span class="line">mkdir /opt/logs/elasticsearch</span><br><span class="line">chow -R elasticsearch. /opt/&#123;data,logs&#125;/elasticsearch</span><br><span class="line">service elasticsearch restart</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装kibana-只需要在一台机器上安装就行"><a href="#安装kibana-只需要在一台机器上安装就行" class="headerlink" title="安装kibana(只需要在一台机器上安装就行)"></a>安装kibana(只需要在一台机器上安装就行)</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh kibana-6.2.4.rpm</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kibana/kibana.yml</span></span><br><span class="line">server.port: 5601</span><br><span class="line">server.host: &quot;0.0.0.0&quot;</span><br><span class="line">elasticsearch.url: &quot;http://172.17.0.4:9200&quot;</span><br><span class="line"></span><br><span class="line">service restart kibana</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装zookeeper集群"><a href="#安装zookeeper集群" class="headerlink" title="安装zookeeper集群"></a>安装zookeeper集群</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf zookeeper-3.4.10.tar.gz -C /opt/app</span><br><span class="line">mv zookeeper-3.4.10 zookeeper</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> cat /opt/app/zookeeper/conf/zoo.cfg</span></span><br><span class="line">tickTime=2000</span><br><span class="line">initLimit=10</span><br><span class="line">syncLimit=5</span><br><span class="line">dataDir=/opt/data/zookeeper</span><br><span class="line">dataLogDir=/opt/logs/zookeeper</span><br><span class="line">clientPort=2181</span><br><span class="line">server.1=172.17.0.1:2889:3889</span><br><span class="line">server.2=172.17.0.2:2889:3889</span><br><span class="line">server.3=172.17.0.3:2889:3889</span><br></pre></td></tr></table></figure>
+
+<p>分别在三台服务器上执行以下命令，需要配置hosts文件,不然找不到主机名</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">echo 1 &gt; /opt/data/zookeeper/myid         #在1上执行</span><br><span class="line">echo 2&gt; /opt/data/zookeeper/myid          #在2上执行 </span><br><span class="line">echo 3 &gt; /opt/data/zookeeper/myid         #在3上执行</span><br><span class="line">/opt/app/zookeeper/bin/zkServer.sh start              #启动zookeeper节点</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装kafka集群"><a href="#安装kafka集群" class="headerlink" title="安装kafka集群"></a>安装kafka集群</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf kafka_2.11-2.0.1.tgz -C /opt/app</span><br><span class="line">mv kafka_2.11-2.0.1 kafka</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">cat /opt/app/kafka/config/server.properties</span></span><br><span class="line">broker.id=1                   #集群ID，集群中每台各不一样,需要修改每个节点,保证不一致</span><br><span class="line">hostname=172.17.0.1           #三个节点各自的IP地址</span><br><span class="line">port=9092</span><br><span class="line">num.network.threads=3</span><br><span class="line">num.io.threads=8</span><br><span class="line">socket.send.buffer.bytes=102400</span><br><span class="line">socket.receive.buffer.bytes=102400</span><br><span class="line">socket.request.max.bytes=104857600</span><br><span class="line">log.dirs=/opt/logs/kafka            #kafka日志目录</span><br><span class="line">num.partitions=3            #单个broker上partations的个数，高并发可多配置。默认为１</span><br><span class="line">num.recovery.threads.per.data.dir=1</span><br><span class="line">offsets.topic.replication.factor=1</span><br><span class="line">transaction.state.log.replication.factor=1</span><br><span class="line">transaction.state.log.min.isr=1</span><br><span class="line">log.retention.hours=168                   #kafka日志保留时间</span><br><span class="line">log.segment.bytes=1073741824</span><br><span class="line">log.retention.check.interval.ms=300000</span><br><span class="line">zookeeper.connect=172.17.0.1:2181,172.17.0.2:2181,172.17.0.3:2181</span><br><span class="line">zookeeper.connection.timeout.ms=6000          #连接zookeeper的超时时间</span><br><span class="line">group.initial.rebalance.delay.ms=0</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup  /opt/app/kafka/bin/kafka-server-start.sh /opt/app/kafka/config/server.properties &gt; /opt/logs/kafka/kafka.log &amp;amp;</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装filebeat"><a href="#安装filebeat" class="headerlink" title="安装filebeat"></a>安装filebeat</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh filebeat-6.2.4.rpm</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">cat /etc/filebeat/filebeat.yml</span></span><br><span class="line"></span><br><span class="line">filebeat.prospectors:</span><br><span class="line">- type: log</span><br><span class="line">  enabled: true</span><br><span class="line">  paths:</span><br><span class="line">    -  /opt/logs/*.log</span><br><span class="line"><span class="meta">  #</span><span class="bash">exclude_lines: [<span class="string">&#x27;^DBG&#x27;</span>]</span></span><br><span class="line"><span class="meta">  #</span><span class="bash">include_lines: [<span class="string">&#x27;^ERR&#x27;</span>, <span class="string">&#x27;^WARN&#x27;</span>]</span></span><br><span class="line"><span class="meta">  #</span><span class="bash">exclude_files: [<span class="string">&#x27;.gz$&#x27;</span>]</span></span><br><span class="line">  fields:</span><br><span class="line">    appname: tdtp-transport</span><br><span class="line">  multiline.pattern: &#x27;^\d&#123;4&#125;\-\d&#123;2&#125;\-\d&#123;2&#125;\s+\d&#123;2&#125;&#x27;</span><br><span class="line">  multiline.negate: true</span><br><span class="line">  multiline.match: after</span><br><span class="line"><span class="meta">#</span><span class="bash">============================= Filebeat modules ===============================</span></span><br><span class="line">filebeat.config.modules:</span><br><span class="line">  path: $&#123;path.config&#125;/modules.d/*.yml</span><br><span class="line">  reload.enabled: false</span><br><span class="line"><span class="meta">  #</span><span class="bash">reload.period: 10s</span></span><br><span class="line"><span class="meta">#</span><span class="bash">==================== Elasticsearch template setting ==========================</span></span><br><span class="line">setup.template.settings:</span><br><span class="line">  index.number_of_shards: 3</span><br><span class="line"><span class="meta">  #</span><span class="bash">index.codec: best_compression</span></span><br><span class="line"><span class="meta">  #</span><span class="bash">_source.enabled: <span class="literal">false</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">================================ General =====================================</span></span><br><span class="line"><span class="meta">#</span><span class="bash">tags: [<span class="string">&quot;service-X&quot;</span>, <span class="string">&quot;web-tier&quot;</span>]</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> output.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">fields:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">  env: staging</span></span><br><span class="line"><span class="meta">#</span><span class="bash">============================== Dashboards =====================================</span></span><br><span class="line"><span class="meta">#</span><span class="bash">setup.dashboards.enabled: <span class="literal">false</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">setup.dashboards.url:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">============================== Kibana =====================================</span></span><br><span class="line">setup.kibana:</span><br><span class="line"><span class="meta">  #</span><span class="bash"> Kibana Host</span></span><br><span class="line"><span class="meta">  #</span><span class="bash"> Scheme and port can be left out and will be <span class="built_in">set</span> to the default (http and 5601)</span></span><br><span class="line"><span class="meta">  #</span><span class="bash"> In <span class="keyword">case</span> you specify and additional path, the scheme is required: http://localhost:5601/path</span></span><br><span class="line"><span class="meta">  #</span><span class="bash"> IPv6 addresses should always be defined as: https://[2001:db8::1]:5601</span></span><br><span class="line"><span class="meta">  #</span><span class="bash">host: <span class="string">&quot;localhost:5601&quot;</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">================================ Outputs =====================================</span></span><br><span class="line">output.kafka:</span><br><span class="line">    hosts: [&quot;172.17.0.1:9092&quot;,&quot;172.17.0.2:9092&quot;,&quot;172.17.0.3:9092&quot;]</span><br><span class="line">    topic: &#x27;%&#123;[fields.appname]&#125;&#x27;</span><br><span class="line">    partition.round_robin:</span><br><span class="line">      reachable_only: false</span><br><span class="line">    required_acks: 1</span><br><span class="line">    compression: gzip</span><br><span class="line">    max_message_bytes: 1000000</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service filebeat restart</span><br></pre></td></tr></table></figure>
+
+<h5 id="Kafka常用命令"><a href="#Kafka常用命令" class="headerlink" title="Kafka常用命令"></a>Kafka常用命令</h5><ol>
+<li>查看kafka中的topic</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/app/kafka/bin/kafka-topics.sh --zookeeper 172.17.0.1:2181,172.17.0.2:2181,172.17.0.3:2181 --list            #该命令显示kafka中的topic，即为filebeat中定义的appname的值</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>创建topic</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/app/kafka/bin/kafka-topics.sh --create --zookeeper 10.1.1.41:2181 --replication-factor 1 --partitions 1 --topic test-01   </span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><p>在kafka中创建发布者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/app/kafka/bin/kafka-console-producer.sh --broker-list --zookeeper 172.17.0.1:2181,172.17.0.2:2181,172.17.0.3:2181 --topic test-01</span><br></pre></td></tr></table></figure></li>
+<li><p>在kafka中创建订阅者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/opt/app/kafka/bin/kafka-console-consumer.sh --zookeeper 172.17.0.1:2181,172.17.0.2:2181,172.17.0.3:2181 --topic test-01 --from-beginning</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h5 id="安装logstash"><a href="#安装logstash" class="headerlink" title="安装logstash"></a>安装logstash</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh logstash-6.2.4.rpm</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">cat /etc/logstash/conf.d/test.conf</span></span><br><span class="line"></span><br><span class="line">input&#123;</span><br><span class="line">    kafka &#123;</span><br><span class="line">        bootstrap_servers = &quot;172.17.0.1:9092,172.17.0.2:9092,172.17.0.3:9092,&quot;</span><br><span class="line">        topics = &quot;tdtp-transport&quot;   #该值为filebeat配置文件中定义的值，可以通过kafka-topic查看</span><br><span class="line">        codec = json</span><br><span class="line">        consumer_threads = 1</span><br><span class="line">        decorate_events = false</span><br><span class="line">        type = &quot;tdtp-transport&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">output &#123;</span><br><span class="line">    elasticsearch &#123;</span><br><span class="line">        hosts = [&quot;172.17.0.4:9200&quot;,&quot;172.17.0.5:9200&quot;,&quot;172.17.0.6:9200&quot;,&quot;172.17.0.7:9200&quot;,&quot;172.17.0.8:9200&quot;,&quot;172.17.0.9:9200&quot;,&quot;172.17.0.10:9200&quot;,]</span><br><span class="line">        index = &quot;%&#123;type&#125;-%&#123;+YYYY.MM.dd&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service logstash restart</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Ansible/" rel="tag"># Ansible</a>
+              <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+              <a href="/tags/Zookeeper/" rel="tag"># Zookeeper</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/9d8f60de.html" rel="prev" title="Haproxy配置优化">
+                  <i class="fa fa-chevron-left"></i> Haproxy配置优化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/d90482da.html" rel="next" title="磁盘分区挂载parted及LVM操作">
+                  磁盘分区挂载parted及LVM操作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanlay</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">200k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:02</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"live2d-widget-model-wanko"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"tagMode":false});</script></body>
+</html>

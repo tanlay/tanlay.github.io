@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;right&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Kubernetes集群拥有一个Kubernetes Master。Kubernetes Master提供集群的独特视角，并且拥有一系列组件，比如Kubernetes API Server。API Server提供可以用来和集群交互的REST端点。master节点包括用来创建和复制Pod的Replication Controller。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos7安装K8S">
+<meta property="og:url" content="http://example.com/post/4c5b1a4b.html">
+<meta property="og:site_name" content="Tanlay">
+<meta property="og:description" content="Kubernetes集群拥有一个Kubernetes Master。Kubernetes Master提供集群的独特视角，并且拥有一系列组件，比如Kubernetes API Server。API Server提供可以用来和集群交互的REST端点。master节点包括用来创建和复制Pod的Replication Controller。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T14:49:42.000Z">
+<meta property="article:modified_time" content="2021-06-10T14:50:28.688Z">
+<meta property="article:author" content="tanlay">
+<meta property="article:tag" content="K8S">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/post/4c5b1a4b.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;post&#x2F;4c5b1a4b.html&quot;,&quot;path&quot;:&quot;post&#x2F;4c5b1a4b.html&quot;,&quot;title&quot;:&quot;Centos7安装K8S&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Centos7安装K8S | Tanlay</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/love.js"></script>
+
+<link rel="alternate" href="/atom.xml" title="Tanlay" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Tanlay</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不忘初心,勇往直前</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#kubernetes%E5%B9%B3%E5%8F%B0%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">kubernetes平台环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">系统初始化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K8S-master%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">K8S master安装配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8master%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85etcd%E3%80%81kubernetes%E5%92%8Cflanneld"><span class="nav-number">2.1.</span> <span class="nav-text">在master节点安装etcd、kubernetes和flanneld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEmaster%E8%8A%82%E7%82%B9etcd"><span class="nav-number">2.2.</span> <span class="nav-text">配置master节点etcd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-etc-kubernetes-config%E9%85%8D%E7%BD%AE"><span class="nav-number">2.3.</span> <span class="nav-text">修改&#x2F;etc&#x2F;kubernetes&#x2F;config配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9kube-apiserver%E9%85%8D%E7%BD%AE"><span class="nav-number">2.4.</span> <span class="nav-text">修改kube-apiserver配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8master%E8%8A%82%E7%82%B9%E4%B8%8A%E7%9A%84etcd-apiserver-controller-manager%E5%92%8Cscheduler"><span class="nav-number">2.5.</span> <span class="nav-text">启动master节点上的etcd, apiserver, controller-manager和scheduler</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K8S-node1%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">K8S node1节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8node1%E8%8A%82%E7%82%B9%E4%B8%8A%E5%AE%89%E8%A3%85flannel%E3%80%81docker%E5%92%8CKubernetes"><span class="nav-number">3.1.</span> <span class="nav-text">在node1节点上安装flannel、docker和Kubernetes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEnode1%E8%8A%82%E7%82%B9etcd"><span class="nav-number">3.2.</span> <span class="nav-text">配置node1节点etcd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-etc-kubernetes-config%E9%85%8D%E7%BD%AE-1"><span class="nav-number">3.3.</span> <span class="nav-text">修改&#x2F;etc&#x2F;kubernetes&#x2F;config配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9kubelet%E9%85%8D%E7%BD%AE"><span class="nav-number">3.4.</span> <span class="nav-text">修改kubelet配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8kube-proxy%E3%80%81kubelet%E3%80%81docker%E5%B9%B6%E6%9F%A5%E7%9C%8B%E5%85%B6%E7%8A%B6%E6%80%81"><span class="nav-number">3.5.</span> <span class="nav-text">启动kube-proxy、kubelet、docker并查看其状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K8S-node1%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE-1"><span class="nav-number">4.</span> <span class="nav-text">K8S node1节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8node2%E8%8A%82%E7%82%B9%E4%B8%8A%E5%AE%89%E8%A3%85flannel%E3%80%81docker%E5%92%8CKubernetes"><span class="nav-number">4.1.</span> <span class="nav-text">在node2节点上安装flannel、docker和Kubernetes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEnode1%E8%8A%82%E7%82%B9etcd-1"><span class="nav-number">4.2.</span> <span class="nav-text">配置node1节点etcd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-etc-kubernetes-config%E9%85%8D%E7%BD%AE-2"><span class="nav-number">4.3.</span> <span class="nav-text">修改&#x2F;etc&#x2F;kubernetes&#x2F;config配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9kubelet%E9%85%8D%E7%BD%AE-1"><span class="nav-number">4.4.</span> <span class="nav-text">修改kubelet配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8kube-proxy%E3%80%81kubelet%E3%80%81docker%E5%B9%B6%E6%9F%A5%E7%9C%8B%E5%85%B6%E7%8A%B6%E6%80%81-1"><span class="nav-number">4.5.</span> <span class="nav-text">启动kube-proxy、kubelet、docker并查看其状态</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K8S-Flanneld%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">K8S Flanneld网络配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAflanneld%E7%BD%91%E7%BB%9C"><span class="nav-number">5.1.</span> <span class="nav-text">创建flanneld网络</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#etcd%E4%BD%BF%E7%94%A8"><span class="nav-number">5.2.</span> <span class="nav-text">etcd使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K8S-Dashborad-UI"><span class="nav-number">6.</span> <span class="nav-text">K8S Dashborad UI</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Docker%E9%95%9C%E5%83%8F%E5%AF%BC%E5%85%A5%E5%B9%B6%E4%BF%AE%E6%94%B9%E5%90%8D%E7%A7%B0"><span class="nav-number">6.1.</span> <span class="nav-text">Docker镜像导入并修改名称</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8master%E5%88%9B%E5%BB%BAdashboard-controller-yaml"><span class="nav-number">6.2.</span> <span class="nav-text">在master创建dashboard-controller.yaml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8master%E4%B8%8A%E5%88%9B%E5%BB%BAdashboard-service-yaml"><span class="nav-number">6.3.</span> <span class="nav-text">在master上创建dashboard-service.yaml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAdashborad-pods%E5%AE%9E%E4%BE%8B"><span class="nav-number">6.4.</span> <span class="nav-text">创建dashborad pods实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bpods%E5%92%8Cservice%E4%BF%A1%E6%81%AF"><span class="nav-number">6.5.</span> <span class="nav-text">查看pods和service信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AEk8s-dasborad-UI"><span class="nav-number">7.</span> <span class="nav-text">访问k8s dasborad UI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AEui%E6%9C%89%E9%97%AE%E9%A2%98%E6%8F%90%E7%A4%BA"><span class="nav-number">8.</span> <span class="nav-text">访问ui有问题提示</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanlay"
+      src="/images/pkq.jpg">
+  <p class="site-author-name" itemprop="name">tanlay</p>
+  <div class="site-description" itemprop="description">Tanlay的学习记录</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanlay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanlay" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:18313178130@163.com" title="E-Mail → mailto:18313178130@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/4c5b1a4b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/pkq.jpg">
+      <meta itemprop="name" content="tanlay">
+      <meta itemprop="description" content="Tanlay的学习记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tanlay">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Centos7安装K8S
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-10 22:49:42 / 修改时间：22:50:28" itemprop="dateCreated datePublished" datetime="2021-06-10T22:49:42+08:00">2021-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">容器技术</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Kubernetes集群拥有一个Kubernetes Master。Kubernetes Master提供集群的独特视角，并且拥有一系列组件，比如Kubernetes API Server。API Server提供可以用来和集群交互的REST端点。master节点包括用来创建和复制Pod的Replication Controller。</p>
+<span id="more"></span>
+
+<h3 id="kubernetes平台环境"><a href="#kubernetes平台环境" class="headerlink" title="kubernetes平台环境"></a>kubernetes平台环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">k8s master节点：172.16.100.11</span><br><span class="line">k8s node1节点：172.16.100.101</span><br><span class="line">k8s node2节点：172.16.100.102</span><br><span class="line">docker仓库节点：172.16.100.105</span><br></pre></td></tr></table></figure>
+
+<h4 id="系统初始化"><a href="#系统初始化" class="headerlink" title="系统初始化"></a>系统初始化</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl disable firewalld</span><br><span class="line">yum -y install ntp</span><br><span class="line">ntpdate pool.ntp.org</span><br><span class="line">systemctl start ntpd</span><br><span class="line">systemctl enable ntpd</span><br></pre></td></tr></table></figure>
+
+<h3 id="K8S-master安装配置"><a href="#K8S-master安装配置" class="headerlink" title="K8S master安装配置"></a>K8S master安装配置</h3><h4 id="在master节点安装etcd、kubernetes和flanneld"><a href="#在master节点安装etcd、kubernetes和flanneld" class="headerlink" title="在master节点安装etcd、kubernetes和flanneld"></a>在master节点安装etcd、kubernetes和flanneld</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install kubernetes-master etcd flannel</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置master节点etcd"><a href="#配置master节点etcd" class="headerlink" title="配置master节点etcd"></a>配置master节点etcd</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/etcd/etcd.conf</span></span><br><span class="line">ETCD_NAME=etcd1</span><br><span class="line">ETCD_DATA_DIR=&quot;/data/etcd&quot;</span><br><span class="line">ETCD_LISTEN_PEER_URLS=&quot;http://172.16.100.11:2380&quot;</span><br><span class="line">ETCD_LISTEN_CLIENT_URLS=&quot;http://172.16.100.11:2379,http://127.0.0.1:2379&quot;</span><br><span class="line">ETCD_MAX_SNAPSHOTS=&quot;5&quot;</span><br><span class="line">ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;http://172.16.100.11:2380&quot;</span><br><span class="line">ETCD_INITIAL_CLUSTER=&quot;etcd1=http://172.16.100.11:2380,etcd2=http://172.16.100.101:2380,etcd3=http://172.16.100.102:2380&quot;</span><br><span class="line">ETCD_ADVERTISE_CLIENT_URLS=&quot;http://172.16.100.11:2379&quot;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建etcd数据目录</span></span><br><span class="line">mkdir  -p  /data/etcd/;chmod 757 -R /data/etcd/</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改-etc-kubernetes-config配置"><a href="#修改-etc-kubernetes-config配置" class="headerlink" title="修改/etc/kubernetes/config配置"></a>修改/etc/kubernetes/config配置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kubernetes/config</span> </span><br><span class="line">KUBE_LOGTOSTDERR=&quot;--logtostderr=true&quot;</span><br><span class="line">KUBE_LOG_LEVEL=&quot;--v=0&quot;</span><br><span class="line">KUBE_ALLOW_PRIV=&quot;--allow-privileged=false&quot;</span><br><span class="line">KUBE_MASTER=&quot;--master=http://172.16.100.11:8080&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改kube-apiserver配置"><a href="#修改kube-apiserver配置" class="headerlink" title="修改kube-apiserver配置"></a>修改kube-apiserver配置</h4><p>将Kubernetes的apiserver进程的服务地址告诉Kubernetes的controller-manager, scheduler,proxy进程。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kubernetes/apiserver</span></span><br><span class="line">KUBE_API_ADDRESS=&quot;--insecure-bind-address=0.0.0.0&quot;</span><br><span class="line">KUBE_API_PORT=&quot;--port=8080&quot;</span><br><span class="line">KUBELET_PORT=&quot;--kubelet-port=10250&quot;</span><br><span class="line">KUBE_ETCD_SERVERS=&quot;--etcd-servers=http://172.16.100.11:2379,http://172.16.100.101:2379,http://172.16.100.102:2379&quot;</span><br><span class="line">KUBE_SERVICE_ADDRESSES=&quot;--service-cluster-ip-range=10.254.0.0/16&quot;</span><br><span class="line">KUBE_ADMISSION_CONTROL=&quot;--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota&quot;</span><br><span class="line">KUBE_API_ARGS=&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动master节点上的etcd-apiserver-controller-manager和scheduler"><a href="#启动master节点上的etcd-apiserver-controller-manager和scheduler" class="headerlink" title="启动master节点上的etcd, apiserver, controller-manager和scheduler"></a>启动master节点上的etcd, apiserver, controller-manager和scheduler</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for I in etcd kube-apiserver kube-controller-manager kube-scheduler;  do</span><br><span class="line">systemctl restart  $I</span><br><span class="line">systemctl enable  $I</span><br><span class="line">systemctl status   $I</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h3 id="K8S-node1节点配置"><a href="#K8S-node1节点配置" class="headerlink" title="K8S node1节点配置"></a>K8S node1节点配置</h3><h4 id="在node1节点上安装flannel、docker和Kubernetes"><a href="#在node1节点上安装flannel、docker和Kubernetes" class="headerlink" title="在node1节点上安装flannel、docker和Kubernetes"></a>在node1节点上安装flannel、docker和Kubernetes</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install kubernetes-node etcd docker flannel *rhsm* -y</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置node1节点etcd"><a href="#配置node1节点etcd" class="headerlink" title="配置node1节点etcd"></a>配置node1节点etcd</h4><p>配置信息告诉flannel进程etcd服务的位置以及在etcd上网络配置信息的节点位置。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/etcd/etc.conf</span></span><br><span class="line">ETCD_NAME=etcd2</span><br><span class="line">ETCD_DATA_DIR=&quot;/data/etcd&quot;</span><br><span class="line">ETCD_LISTEN_PEER_URLS=&quot;http://172.16.100.101:2380&quot;</span><br><span class="line">ETCD_LISTEN_CLIENT_URLS=&quot;http://172.16.100.101:2379,http://127.0.0.1:2379&quot;</span><br><span class="line">ETCD_MAX_SNAPSHOTS=&quot;5&quot;</span><br><span class="line">ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;http://172.16.100.101:2380&quot;</span><br><span class="line">ETCD_INITIAL_CLUSTER=&quot;etcd1=http://172.16.100.11:2380,etcd2=http://172.16.100.101:2380,etcd3=http://172.16.100.102:2380&quot;</span><br><span class="line">ETCD_ADVERTISE_CLIENT_URLS=&quot;http://172.16.100.101:2379&quot;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建etcd数据目录</span></span><br><span class="line">mkdir  -p  /data/etcd/;chmod 757 -R /data/etcd/</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改-etc-kubernetes-config配置-1"><a href="#修改-etc-kubernetes-config配置-1" class="headerlink" title="修改/etc/kubernetes/config配置"></a>修改/etc/kubernetes/config配置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kubernetes/config</span></span><br><span class="line">KUBE_LOGTOSTDERR=&quot;--logtostderr=true&quot;</span><br><span class="line">KUBE_LOG_LEVEL=&quot;--v=0&quot;</span><br><span class="line">KUBE_ALLOW_PRIV=&quot;--allow-privileged=false&quot;</span><br><span class="line">KUBE_MASTER=&quot;--master=http://172.16.100.11:8080&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改kubelet配置"><a href="#修改kubelet配置" class="headerlink" title="修改kubelet配置"></a>修改kubelet配置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kubernetes/kubelet</span></span><br><span class="line">KUBELET_ADDRESS=&quot;--address=0.0.0.0&quot;</span><br><span class="line">KUBELET_PORT=&quot;--port=10250&quot;</span><br><span class="line">KUBELET_HOSTNAME=&quot;--hostname-override=172.16.100.101&quot;</span><br><span class="line">KUBELET_API_SERVER=&quot;--api-servers=http://172.16.100.11:8080&quot;</span><br><span class="line">KUBELET_POD_INFRA_CONTAINER=&quot;--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest&quot;</span><br><span class="line">KUBELET_ARGS=&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动kube-proxy、kubelet、docker并查看其状态"><a href="#启动kube-proxy、kubelet、docker并查看其状态" class="headerlink" title="启动kube-proxy、kubelet、docker并查看其状态"></a>启动kube-proxy、kubelet、docker并查看其状态</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for I in kube-proxy kubelet docker</span><br><span class="line">do</span><br><span class="line">systemctl  enable  $I</span><br><span class="line">systemctl  restart  $I</span><br><span class="line">systemctl  status  $I</span><br><span class="line">done</span><br><span class="line">iptables -P FORWARD ACCEPT</span><br></pre></td></tr></table></figure>
+
+<h3 id="K8S-node1节点配置-1"><a href="#K8S-node1节点配置-1" class="headerlink" title="K8S node1节点配置"></a>K8S node1节点配置</h3><h4 id="在node2节点上安装flannel、docker和Kubernetes"><a href="#在node2节点上安装flannel、docker和Kubernetes" class="headerlink" title="在node2节点上安装flannel、docker和Kubernetes"></a>在node2节点上安装flannel、docker和Kubernetes</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install kubernetes-node etcd docker flannel *rhsm* -y</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置node1节点etcd-1"><a href="#配置node1节点etcd-1" class="headerlink" title="配置node1节点etcd"></a>配置node1节点etcd</h4><p>配置信息告诉flannel进程etcd服务的位置以及在etcd上网络配置信息的节点位置。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/etcd/etc.conf</span></span><br><span class="line">ETCD_NAME=etcd3</span><br><span class="line">ETCD_DATA_DIR=&quot;/data/etcd&quot;</span><br><span class="line">ETCD_LISTEN_PEER_URLS=&quot;http://172.16.100.102:2380&quot;</span><br><span class="line">ETCD_LISTEN_CLIENT_URLS=&quot;http://172.16.100.102:2379,http://127.0.0.1:2379&quot;</span><br><span class="line">ETCD_MAX_SNAPSHOTS=&quot;5&quot;</span><br><span class="line">ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;http://172.16.100.102:2380&quot;</span><br><span class="line">ETCD_INITIAL_CLUSTER=&quot;etcd1=http://172.16.100.11:2380,etcd2=http://172.16.100.101:2380,etcd3=http://172.16.100.102:2380&quot;</span><br><span class="line">ETCD_ADVERTISE_CLIENT_URLS=&quot;http://172.16.100.102:2379&quot;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建etcd数据目录</span></span><br><span class="line">mkdir  -p  /data/etcd/;chmod 757 -R /data/etcd/</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改-etc-kubernetes-config配置-2"><a href="#修改-etc-kubernetes-config配置-2" class="headerlink" title="修改/etc/kubernetes/config配置"></a>修改/etc/kubernetes/config配置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kubernetes/config</span></span><br><span class="line">KUBE_LOGTOSTDERR=&quot;--logtostderr=true&quot;</span><br><span class="line">KUBE_LOG_LEVEL=&quot;--v=0&quot;</span><br><span class="line">KUBE_ALLOW_PRIV=&quot;--allow-privileged=false&quot;</span><br><span class="line">KUBE_MASTER=&quot;--master=http://172.16.100.11:8080&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改kubelet配置-1"><a href="#修改kubelet配置-1" class="headerlink" title="修改kubelet配置"></a>修改kubelet配置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/kubernetes/kubelet</span></span><br><span class="line">KUBELET_ADDRESS=&quot;--address=0.0.0.0&quot;</span><br><span class="line">KUBELET_PORT=&quot;--port=10250&quot;</span><br><span class="line">KUBELET_HOSTNAME=&quot;--hostname-override=172.16.100.102&quot;</span><br><span class="line">KUBELET_API_SERVER=&quot;--api-servers=http://172.16.100.11:8080&quot;</span><br><span class="line">KUBELET_POD_INFRA_CONTAINER=&quot;--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest&quot;</span><br><span class="line">KUBELET_ARGS=&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动kube-proxy、kubelet、docker并查看其状态-1"><a href="#启动kube-proxy、kubelet、docker并查看其状态-1" class="headerlink" title="启动kube-proxy、kubelet、docker并查看其状态"></a>启动kube-proxy、kubelet、docker并查看其状态</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for  I  in  kube-proxy  kubelet  docker</span><br><span class="line">do</span><br><span class="line">systemctl  enable  $I</span><br><span class="line">systemctl  restart  $I</span><br><span class="line">systemctl  status  $I</span><br><span class="line">done</span><br><span class="line">iptables -P FORWARD ACCEPT</span><br></pre></td></tr></table></figure>
+
+<h3 id="K8S-Flanneld网络配置"><a href="#K8S-Flanneld网络配置" class="headerlink" title="K8S Flanneld网络配置"></a>K8S Flanneld网络配置</h3><p>k8s的node节点搭建和配置flannel网络，etcd中/atomic.io/network/config节点会被Node节点上的flannel用来创建Doker IP地址网段。k8s集群所有节点都需要配置flanneld网络，如下，配置完成之后依次重启flanneld。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/sysconfig/flanneld</span></span><br><span class="line">FLANNEL_ETCD_ENDPOINTS=&quot;http://172.16.100.11:2379&quot;</span><br><span class="line">FLANNEL_ETCD_PREFIX=&quot;/atomic.io/network&quot;</span><br></pre></td></tr></table></figure>
+
+<p>重启flanneld失败，原因是etcd中没有创建flannel网络</p>
+<h4 id="创建flanneld网络"><a href="#创建flanneld网络" class="headerlink" title="创建flanneld网络"></a>创建flanneld网络</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">etcdctl  mk  /atomic.io/network/config &#x27;&#123;&quot;Network&quot;:&quot;172.17.0.0/16&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<h4 id="etcd使用"><a href="#etcd使用" class="headerlink" title="etcd使用"></a>etcd使用</h4><p>在master节点上测试etcd集群是否正常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">etcdctl  member list</span><br><span class="line">etcdctl cluster-health</span><br><span class="line">etcdctl get /atomic.io/network/config</span><br><span class="line">etcdctl ls /atomic.io/network/subnets</span><br><span class="line">etcdctl  rm   /atomic.io/network/   --recursive</span><br><span class="line">etcdctl  mk  /atomic.io/network/config &#x27;&#123;&quot;Network&quot;:&quot;172.17.0.0/16&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="K8S-Dashborad-UI"><a href="#K8S-Dashborad-UI" class="headerlink" title="K8S Dashborad UI"></a>K8S Dashborad UI</h3><p>k8s实现的最重要的工作是对Docker容器集群统一的管理和调度，通常使用命令行来操作Kubernetes集群及各个节点，命令行操作非常不方便，如果使用UI界面来可视化操作，会更加方便的管理和维护。</p>
+<p>由于官网下载镜像太慢，提前下载好以下两个镜像：</p>
+<ul>
+<li>pod-infrastructure</li>
+<li>kubernetes-dashboard-amd64</li>
+</ul>
+<h4 id="Docker镜像导入并修改名称"><a href="#Docker镜像导入并修改名称" class="headerlink" title="Docker镜像导入并修改名称"></a>Docker镜像导入并修改名称</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker load &lt; pod-infrastructure.tgz</span><br><span class="line">docker tag $(docker images|grep none|awk &#x27;&#123;print $3&#125;&#x27;) registry.access.redhat.com/rhel7/pod-infrastructure</span><br><span class="line">docker load &lt;kubernetes-dashboard-amd64.tgz</span><br><span class="line">docker tag $(docker images|grep none|awk &#x27;&#123;print $3&#125;&#x27;) bestwu/kubernetes-dashboard-amd64:v1.6.3</span><br></pre></td></tr></table></figure>
+
+<h4 id="在master创建dashboard-controller-yaml"><a href="#在master创建dashboard-controller-yaml" class="headerlink" title="在master创建dashboard-controller.yaml"></a>在master创建dashboard-controller.yaml</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">    <span class="attr">kubernetes.io/cluster-service:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">      <span class="attr">annotations:</span></span><br><span class="line">        <span class="attr">scheduler.alpha.kubernetes.io/critical-pod:</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="attr">scheduler.alpha.kubernetes.io/tolerations:</span> <span class="string">&#x27;[&#123;&quot;key&quot;:&quot;CriticalAddonsOnly&quot;, &quot;operator&quot;:&quot;Exists&quot;&#125;]&#x27;</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">bestwu/kubernetes-dashboard-amd64:v1.6.3</span></span><br><span class="line">        <span class="attr">resources:</span></span><br><span class="line">          <span class="comment"># keep request = limit to keep this container in guaranteed class</span></span><br><span class="line">          <span class="attr">limits:</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">50Mi</span></span><br><span class="line">          <span class="attr">requests:</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">50Mi</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">9090</span></span><br><span class="line">        <span class="attr">args:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">--apiserver-host=http://172.16.100.11:8080</span></span><br><span class="line">        <span class="attr">livenessProbe:</span></span><br><span class="line">          <span class="attr">httpGet:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">port:</span> <span class="number">9090</span></span><br><span class="line">          <span class="attr">initialDelaySeconds:</span> <span class="number">30</span></span><br><span class="line">          <span class="attr">timeoutSeconds:</span> <span class="number">30</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="在master上创建dashboard-service-yaml"><a href="#在master上创建dashboard-service-yaml" class="headerlink" title="在master上创建dashboard-service.yaml"></a>在master上创建dashboard-service.yaml</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">    <span class="attr">kubernetes.io/cluster-service:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">k8s-app:</span> <span class="string">kubernetes-dashboard</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">9090</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="创建dashborad-pods实例"><a href="#创建dashborad-pods实例" class="headerlink" title="创建dashborad pods实例"></a>创建dashborad pods实例</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f dashboard-controller.yaml</span><br><span class="line">kubectl create -f dashboard-service.yaml </span><br></pre></td></tr></table></figure>
+
+<h4 id="查看pods和service信息"><a href="#查看pods和service信息" class="headerlink" title="查看pods和service信息"></a>查看pods和service信息</h4><p>因为默认查询到的namespace是default下的，所以需要指定namespace </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl  get  namespace</span><br><span class="line">kubectl get  deployment --all-namespaces</span><br><span class="line">kubectl get  svc  --all-namespaces</span><br><span class="line">kubectl  get  pods  --all-namespaces</span><br><span class="line">kubectl get pod  -o wide  --all-namespaces</span><br><span class="line">kubectl  describe  service/kubernetes-dashboard  --namespace=&quot;kube-system&quot;</span><br><span class="line">kubectl  describe  pod/kubernetes-dashboard-530803917-816df --namespace=&quot;kube-system&quot;</span><br><span class="line">kubectl  delete pod/kubernetes-dashboard-530803917-816df --namespace=&quot;kube-system&quot; --grace-period=0 --force</span><br></pre></td></tr></table></figure>
+
+<h3 id="访问k8s-dasborad-UI"><a href="#访问k8s-dasborad-UI" class="headerlink" title="访问k8s dasborad UI"></a>访问k8s dasborad UI</h3><p>通过浏览器访问：<a target="_blank" rel="noopener" href="http://172.16.100.11/ui">http://172.16.100.11/ui</a></p>
+<h3 id="访问ui有问题提示"><a href="#访问ui有问题提示" class="headerlink" title="访问ui有问题提示"></a>访问ui有问题提示</h3><ul>
+<li>注意dashborad-controller.yaml中定义的apiserver-host 是否正确</li>
+<li>使用iptables -P FORWARD ACCEPT </li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/K8S/" rel="tag"># K8S</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/d6261197.html" rel="prev" title="k8s-一个简单的例子">
+                  <i class="fa fa-chevron-left"></i> k8s-一个简单的例子
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/d936a15c.html" rel="next" title="Jenkins发布脚本">
+                  Jenkins发布脚本 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanlay</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">200k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:02</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"live2d-widget-model-wanko"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"tagMode":false});</script></body>
+</html>

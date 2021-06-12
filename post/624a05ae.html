@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;right&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:true,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script><script src="/js/config.js"></script>
+<meta name="description" content="firewall-cmd命令工具有两种配置模式：运行时模式（Runtime mode）表示当前内存中运行的防火墙配置，在系统或firewalld服务重启、停止时配置将失效；永久模式（Permanent mode）表示重启防火墙或重新加载防火墙时的规则配置，是永久存储在配置文件中的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos7中Firewall命令记录">
+<meta property="og:url" content="http://example.com/post/624a05ae.html">
+<meta property="og:site_name" content="Tanlay">
+<meta property="og:description" content="firewall-cmd命令工具有两种配置模式：运行时模式（Runtime mode）表示当前内存中运行的防火墙配置，在系统或firewalld服务重启、停止时配置将失效；永久模式（Permanent mode）表示重启防火墙或重新加载防火墙时的规则配置，是永久存储在配置文件中的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T13:42:34.000Z">
+<meta property="article:modified_time" content="2021-06-11T07:21:48.771Z">
+<meta property="article:author" content="tanlay">
+<meta property="article:tag" content="Firewalld">
+<meta property="article:tag" content="防火墙">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/post/624a05ae.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;post&#x2F;624a05ae.html&quot;,&quot;path&quot;:&quot;post&#x2F;624a05ae.html&quot;,&quot;title&quot;:&quot;Centos7中Firewall命令记录&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>Centos7中Firewall命令记录 | Tanlay</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/love.js"></script>
+
+<link rel="alternate" href="/atom.xml" title="Tanlay" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Tanlay</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">不忘初心,勇往直前</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#firewalld-%E4%B8%8E-iptables%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.</span> <span class="nav-text">firewalld 与 iptables的比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85firewalld"><span class="nav-number">2.</span> <span class="nav-text">安装firewalld</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#firewall%E5%90%AF%E5%81%9C"><span class="nav-number">3.</span> <span class="nav-text">firewall启停</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bfirewall%E7%8A%B6%E6%80%81"><span class="nav-number">4.</span> <span class="nav-text">查看firewall状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEfirewalld%E6%97%A5%E5%BF%97"><span class="nav-number">5.</span> <span class="nav-text">配置firewalld日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E6%96%87%E4%BB%B6%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">创建新文件指定文件位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9sysconfig%E4%B8%8Bfirewalld%E6%96%87%E4%BB%B6%EF%BC%8C%E4%BF%AE%E6%94%B9%E6%97%A5%E5%BF%97%E7%BA%A7%E5%88%AB"><span class="nav-number">5.2.</span> <span class="nav-text">修改sysconfig下firewalld文件，修改日志级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%97%A5%E5%BF%97%E6%BB%9A%E5%8A%A8%E5%88%87%E5%89%B2-%E6%8A%8A-var-log-firewalld-log%E5%8A%A0%E5%85%A5%E8%BF%9B%E5%8E%BB"><span class="nav-number">5.3.</span> <span class="nav-text">配置日志滚动切割,把&#x2F;var&#x2F;log&#x2F;firewalld.log加入进去</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E5%90%AFrsyslog%E5%92%8Cfirewalld"><span class="nav-number">5.4.</span> <span class="nav-text">重启rsyslog和firewalld</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%97%A5%E5%BF%97"><span class="nav-number">5.5.</span> <span class="nav-text">查看日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%BE%E5%87%BA%E8%A2%AB%E6%8B%92%E7%BB%9D%E6%9C%80%E5%A4%9A%E7%9A%84IP"><span class="nav-number">5.6.</span> <span class="nav-text">找出被拒绝最多的IP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">重载配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E7%BB%8F%E5%BC%80%E6%94%BE%E7%9A%84service"><span class="nav-number">7.</span> <span class="nav-text">查看已经开放的service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E7%BB%8F%E5%BC%80%E6%94%BE%E7%9A%84port"><span class="nav-number">8.</span> <span class="nav-text">查看已经开放的port</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9F%90%E4%B8%AA%E6%9C%8D%E5%8A%A1%E6%98%AF%E5%90%A6%E5%BC%80%E6%94%BE"><span class="nav-number">9.</span> <span class="nav-text">查看某个服务是否开放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9F%90%E4%B8%AA%E7%AB%AF%E5%8F%A3%E6%98%AF%E5%90%A6%E5%BC%80%E6%94%BE"><span class="nav-number">10.</span> <span class="nav-text">查看某个端口是否开放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E7%BB%8F%E5%BC%80%E6%94%BE%E7%9A%84forward"><span class="nav-number">11.</span> <span class="nav-text">查看已经开放的forward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%B7%B2%E5%BC%80%E6%94%BE%E7%9A%84interface"><span class="nav-number">12.</span> <span class="nav-text">查看已开放的interface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bpublic%E5%8C%BA%E5%9F%9F%E5%B7%B2%E5%BC%80%E6%94%BE%E7%9A%84service%E5%92%8Cport"><span class="nav-number">13.</span> <span class="nav-text">查看public区域已开放的service和port</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E5%8C%BA%E5%9F%9F%E5%B7%B2%E5%BC%80%E6%94%BE%E7%9A%84service%E5%92%8Cport"><span class="nav-number">14.</span> <span class="nav-text">查看所有区域已开放的service和port</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8D%95%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%90%AF%E7%94%A8%E7%8A%B6%E6%80%81"><span class="nav-number">15.</span> <span class="nav-text">查看单个服务的启用状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E8%A7%84%E5%88%99"><span class="nav-number">16.</span> <span class="nav-text">动态添加规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0http%E6%9C%8D%E5%8A%A1"><span class="nav-number">16.1.</span> <span class="nav-text">添加http服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0tcp%E7%AB%AF%E5%8F%A3"><span class="nav-number">16.2.</span> <span class="nav-text">添加tcp端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0udp%E7%AB%AF%E5%8F%A3"><span class="nav-number">16.3.</span> <span class="nav-text">添加udp端口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%A7%BB%E9%99%A4%E8%A7%84%E5%88%99"><span class="nav-number">17.</span> <span class="nav-text">动态移除规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4http%E6%9C%8D%E5%8A%A1"><span class="nav-number">17.1.</span> <span class="nav-text">移除http服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4tcp%E7%AB%AF%E5%8F%A3"><span class="nav-number">18.</span> <span class="nav-text">移除tcp端口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E9%99%A4udp%E7%AB%AF%E5%8F%A3"><span class="nav-number">18.1.</span> <span class="nav-text">移除udp端口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E8%BD%AC%E5%8F%91"><span class="nav-number">19.</span> <span class="nav-text">流量转发</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8680%E8%BD%AC%E5%8F%91%E5%88%B0%E5%90%8C%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%848080%E4%B8%8A"><span class="nav-number">19.1.</span> <span class="nav-text">将80转发到同一台服务器的8080上</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8680%E8%BD%AC%E5%8F%91%E5%88%B0%E5%90%8C%E4%B8%80%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%848080%E7%A7%BB%E9%99%A4"><span class="nav-number">19.2.</span> <span class="nav-text">将80转发到同一台服务器的8080移除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B9%8B%E5%89%8D%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-number">19.3.</span> <span class="nav-text">服务器之前端口转发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%90%AFIP%E4%BC%AA%E8%A3%85"><span class="nav-number">19.4.</span> <span class="nav-text">开启IP伪装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B080%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E8%87%B3192-168-100-38%E7%9A%848080%E7%AB%AF%E5%8F%A3%E4%B8%8A"><span class="nav-number">19.5.</span> <span class="nav-text">本地80端口转发至192.168.100.38的8080端口上</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99%E4%BC%AA%E8%A3%85"><span class="nav-number">20.</span> <span class="nav-text">防火墙伪装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2ping"><span class="nav-number">21.</span> <span class="nav-text">禁止ping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2IP%E8%AE%BF%E9%97%AE"><span class="nav-number">22.</span> <span class="nav-text">禁止IP访问</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E6%9F%90%E4%B8%AAIP%E8%AE%BF%E9%97%AE"><span class="nav-number">22.1.</span> <span class="nav-text">禁止某个IP访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E6%9F%90%E4%B8%AA%E7%BD%91%E6%AE%B5%E8%AE%BF%E9%97%AE"><span class="nav-number">22.2.</span> <span class="nav-text">禁止某个网段访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E5%8F%AA%E5%85%81%E8%AE%B8%E6%9F%90%E4%B8%AAIP%E8%AE%BF%E9%97%AE%E6%9F%90%E4%B8%AA%E7%AB%AF%E5%8F%A3"><span class="nav-number">22.3.</span> <span class="nav-text">限制只允许某个IP访问某个端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E6%9F%90%E4%B8%AAIP%E8%AE%BF%E9%97%AE%E6%9F%90%E4%B8%AA%E7%AB%AF%E5%8F%A3"><span class="nav-number">22.4.</span> <span class="nav-text">禁止某个IP访问某个端口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E7%A9%BA%E9%98%B2%E7%81%AB%E5%A2%99%E8%A7%84%E5%88%99"><span class="nav-number">23.</span> <span class="nav-text">清空防火墙规则</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanlay"
+      src="/images/pkq.jpg">
+  <p class="site-author-name" itemprop="name">tanlay</p>
+  <div class="site-description" itemprop="description">Tanlay的学习记录</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanlay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanlay" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:18313178130@163.com" title="E-Mail → mailto:18313178130@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/624a05ae.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/pkq.jpg">
+      <meta itemprop="name" content="tanlay">
+      <meta itemprop="description" content="Tanlay的学习记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tanlay">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Centos7中Firewall命令记录
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-10 21:42:34" itemprop="dateCreated datePublished" datetime="2021-06-10T21:42:34+08:00">2021-06-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-11 15:21:48" itemprop="dateModified" datetime="2021-06-11T15:21:48+08:00">2021-06-11</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">系统管理</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>firewall-cmd命令工具有两种配置模式：运行时模式（Runtime mode）表示当前内存中运行的防火墙配置，在系统或firewalld服务重启、停止时配置将失效；永久模式（Permanent mode）表示重启防火墙或重新加载防火墙时的规则配置，是永久存储在配置文件中的。</p>
+<span id="more"></span>
+
+<h3 id="firewalld-与-iptables的比较"><a href="#firewalld-与-iptables的比较" class="headerlink" title="firewalld 与 iptables的比较"></a>firewalld 与 iptables的比较</h3><ul>
+<li><p>firewalld和iptables两者本身并不具备防火墙的功能，都是需要通过内核的netfilter来实现的。都是用于维护管理规则，本身干活的的是netfilter。</p>
+</li>
+<li><p>firewalld可以动态修改单条规则，允许更新规则而不破坏现有会话和连接。而iptables修改了规则之后必须全部刷新才可以生效。</p>
+</li>
+<li><p>firewalld使用区域和服务器，iptables使用的是链式规则。</p>
+</li>
+</ul>
+<p>firewall主要有三种配置方法：firewall-config（图形工具）、firewall-cmd（命令行工具）和直接编辑xml文件。</p>
+<h3 id="安装firewalld"><a href="#安装firewalld" class="headerlink" title="安装firewalld"></a>安装firewalld</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# yum -y install firewalld</span><br></pre></td></tr></table></figure>
+
+<h3 id="firewall启停"><a href="#firewall启停" class="headerlink" title="firewall启停"></a>firewall启停</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service      #停止firewall</span><br><span class="line">systemctl disable firewalld.service   #禁止firewall开机启动</span><br><span class="line">systemctl start firewalld.service     #启动firewall</span><br><span class="line">systemctl enable firewalld.service    #firewall开机启动</span><br><span class="line">systemctl enable firewalld.service    #查看firewall是否开机启动</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看firewall状态"><a href="#查看firewall状态" class="headerlink" title="查看firewall状态"></a>查看firewall状态</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# firewall-cmd --state</span><br><span class="line">running</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置firewalld日志"><a href="#配置firewalld日志" class="headerlink" title="配置firewalld日志"></a>配置firewalld日志</h3><p>firewalld的默认配置是不记录日志，通过配置rsyslog，记录firewalld日志。</p>
+<h4 id="创建新文件指定文件位置"><a href="#创建新文件指定文件位置" class="headerlink" title="创建新文件指定文件位置"></a>创建新文件指定文件位置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# cat /etc/rsyslog.d/firewalld.conf          </span><br><span class="line">kern.* /var/log/firewalld.log</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改sysconfig下firewalld文件，修改日志级别"><a href="#修改sysconfig下firewalld文件，修改日志级别" class="headerlink" title="修改sysconfig下firewalld文件，修改日志级别"></a>修改sysconfig下firewalld文件，修改日志级别</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# cat /etc/sysconfig/firewalld    </span><br><span class="line"><span class="meta">#</span><span class="bash"> firewalld <span class="built_in">command</span> line args</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> possible values: --debug</span></span><br><span class="line">FIREWALLD_ARGS=--debug=10</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置日志滚动切割-把-var-log-firewalld-log加入进去"><a href="#配置日志滚动切割-把-var-log-firewalld-log加入进去" class="headerlink" title="配置日志滚动切割,把/var/log/firewalld.log加入进去"></a>配置日志滚动切割,把/var/log/firewalld.log加入进去</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# cat /etc/logrotate.d/syslog    </span><br><span class="line">/var/log/cron</span><br><span class="line">/var/log/maillog</span><br><span class="line">/var/log/messages</span><br><span class="line">/var/log/secure</span><br><span class="line">/var/log/firewalld.log</span><br><span class="line">/var/log/spooler</span><br><span class="line">&#123;</span><br><span class="line">    missingok</span><br><span class="line">    sharedscripts</span><br><span class="line">    postrotate</span><br><span class="line">        /bin/kill -HUP `cat /var/run/syslogd.pid 2&gt; /dev/null` 2&gt; /dev/null || true</span><br><span class="line">    endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="重启rsyslog和firewalld"><a href="#重启rsyslog和firewalld" class="headerlink" title="重启rsyslog和firewalld"></a>重启rsyslog和firewalld</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# systemctl restart rsyslog firewalld</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# tail -f /var/log/firewalld.log </span><br></pre></td></tr></table></figure>
+
+<h4 id="找出被拒绝最多的IP"><a href="#找出被拒绝最多的IP" class="headerlink" title="找出被拒绝最多的IP"></a>找出被拒绝最多的IP</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# grep &quot;FINAL_REJECT:&quot; /var/log/firewalld.log | awk &#x27;&#123;print $10&#125;&#x27;| sort -n | uniq -c | sort -k1nr | head -1</span><br><span class="line">     11 SRC=192.168.100.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="重载配置文件"><a href="#重载配置文件" class="headerlink" title="重载配置文件"></a>重载配置文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 重新加载防火墙，并不中断用户连接，即不丢失状态信息</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --reload </span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> 防火墙出现严重问题时使用。比如，防火墙规则是正确的，但却出现状态信息问题和无法建立连接。</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --complete-reload  </span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看已经开放的service"><a href="#查看已经开放的service" class="headerlink" title="查看已经开放的service"></a>查看已经开放的service</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看默认public区域</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --list-services</span><br><span class="line">dhcpv6-client ssh</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看指定区域</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --zone=dmz --list-services   </span><br><span class="line">ssh</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看已经开放的port"><a href="#查看已经开放的port" class="headerlink" title="查看已经开放的port"></a>查看已经开放的port</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看默认public区域</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --list-ports</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看指定区域</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --zone=dmz --list-ports</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看某个服务是否开放"><a href="#查看某个服务是否开放" class="headerlink" title="查看某个服务是否开放"></a>查看某个服务是否开放</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看https服务是否开放</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-service https</span><br><span class="line">no</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看某个端口是否开放"><a href="#查看某个端口是否开放" class="headerlink" title="查看某个端口是否开放"></a>查看某个端口是否开放</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 查看3306/tcp端口是否开放</span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-port 3306/tcp</span><br><span class="line">no</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看已经开放的forward"><a href="#查看已经开放的forward" class="headerlink" title="查看已经开放的forward"></a>查看已经开放的forward</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看默认public区域</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --list-forward</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看指定区域</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --zone=dmz --list-forward</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看已开放的interface"><a href="#查看已开放的interface" class="headerlink" title="查看已开放的interface"></a>查看已开放的interface</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看网络接口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --list-interface </span><br><span class="line">ens33</span><br><span class="line"><span class="meta">#</span><span class="bash"> 新增网络接口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd  --add-interface=eth0 --permanent  </span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> 移除eth0网络接口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd  --remove-interface=eth0 --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看public区域已开放的service和port"><a href="#查看public区域已开放的service和port" class="headerlink" title="查看public区域已开放的service和port"></a>查看public区域已开放的service和port</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# firewall-cmd --list-all</span><br><span class="line">public (active)</span><br><span class="line">  target: default</span><br><span class="line">  icmp-block-inversion: no</span><br><span class="line">  interfaces: ens33 eth0</span><br><span class="line">  sources: </span><br><span class="line">  services: http ssh</span><br><span class="line">  ports: </span><br><span class="line">  protocols: </span><br><span class="line">  masquerade: yes</span><br><span class="line">  forward-ports: port=80:proto=tcp:toport=8080:toaddr=192.168.100.28</span><br><span class="line">  source-ports: </span><br><span class="line">  icmp-blocks: </span><br><span class="line">  rich rules: </span><br><span class="line">        rule protocol value=&quot;icmp&quot; drop</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看所有区域已开放的service和port"><a href="#查看所有区域已开放的service和port" class="headerlink" title="查看所有区域已开放的service和port"></a>查看所有区域已开放的service和port</h3><p>显示/etc/firewalld/zones/下的所有策略</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# firewall-cmd --list-all-zone</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看单个服务的启用状态"><a href="#查看单个服务的启用状态" class="headerlink" title="查看单个服务的启用状态"></a>查看单个服务的启用状态</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看http是否启用</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-service http</span><br><span class="line">no</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看ssh是否启用</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-service ssh</span><br><span class="line">yes</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态添加规则"><a href="#动态添加规则" class="headerlink" title="动态添加规则"></a>动态添加规则</h3><p>以下方式使用–permanent参数写入配置文件，永久生效，但是需要reload才能生效</p>
+<h4 id="添加http服务"><a href="#添加http服务" class="headerlink" title="添加http服务"></a>添加http服务</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# firewall-cmd --add-service=http --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加tcp端口"><a href="#添加tcp端口" class="headerlink" title="添加tcp端口"></a>添加tcp端口</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@srv01 ~]# firewall-cmd --add-port=5432/tcp --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加udp端口"><a href="#添加udp端口" class="headerlink" title="添加udp端口"></a>添加udp端口</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 添加6379-6384/udp端口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-port=6379-6384/udp --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态移除规则"><a href="#动态移除规则" class="headerlink" title="动态移除规则"></a>动态移除规则</h3><p>以下方式使用–permanent参数写入配置文件，永久生效，但是需要reload才能生效</p>
+<h4 id="移除http服务"><a href="#移除http服务" class="headerlink" title="移除http服务"></a>移除http服务</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 直接移除https</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --remove-service=http --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="移除tcp端口"><a href="#移除tcp端口" class="headerlink" title="移除tcp端口"></a>移除tcp端口</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 直接移除5432/tcp端口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --remove-port=5432/tcp --permanent  </span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h4 id="移除udp端口"><a href="#移除udp端口" class="headerlink" title="移除udp端口"></a>移除udp端口</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 直接移除6379-7384/udp端口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --remove-port=6379-7384/udp --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="流量转发"><a href="#流量转发" class="headerlink" title="流量转发"></a>流量转发</h3><p>以下方式使用–permanent参数写入配置文件，永久生效，但是需要reload才能生效</p>
+<h4 id="将80转发到同一台服务器的8080上"><a href="#将80转发到同一台服务器的8080上" class="headerlink" title="将80转发到同一台服务器的8080上"></a>将80转发到同一台服务器的8080上</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 永久生效同一台服务上80转发至8080上策略,reload生效</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-forward-port=port=80:proto=tcp:toport=8088</span><br><span class="line">success --permanent</span><br></pre></td></tr></table></figure>
+
+<h4 id="将80转发到同一台服务器的8080移除"><a href="#将80转发到同一台服务器的8080移除" class="headerlink" title="将80转发到同一台服务器的8080移除"></a>将80转发到同一台服务器的8080移除</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 永久移除同一台服务上80转发至8080上策略,reload生效</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --remove-forward-port=port=80:proto=tcp:toport=8088 --permanent</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h4 id="服务器之前端口转发"><a href="#服务器之前端口转发" class="headerlink" title="服务器之前端口转发"></a>服务器之前端口转发</h4><p>需要开启ip伪装，否则服务器之间端口转发不成功。以下方式使用–permanent参数写入配置文件，永久生效，但是需要reload才能生效</p>
+<h4 id="开启IP伪装"><a href="#开启IP伪装" class="headerlink" title="开启IP伪装"></a>开启IP伪装</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 开启IP伪装</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-masquerade --permanent</span><br></pre></td></tr></table></figure>
+
+<h4 id="本地80端口转发至192-168-100-38的8080端口上"><a href="#本地80端口转发至192-168-100-38的8080端口上" class="headerlink" title="本地80端口转发至192.168.100.38的8080端口上"></a>本地80端口转发至192.168.100.38的8080端口上</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 本地80端口转发至192.168.100.38的8080端口上，reload 生效</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-forward-port=port=80:proto=tcp:toport=8080:toaddr=192.168.100.28 --permanent</span><br></pre></td></tr></table></figure>
+
+<h3 id="防火墙伪装"><a href="#防火墙伪装" class="headerlink" title="防火墙伪装"></a>防火墙伪装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"> #</span><span class="bash"> 检查是否允许伪装IP</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-masquerade</span><br><span class="line">yes</span><br><span class="line"><span class="meta">#</span><span class="bash"> 允许防火墙伪装IP</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-masquerade</span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> 禁止防火墙伪装IP</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --remove-masquerade</span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="禁止ping"><a href="#禁止ping" class="headerlink" title="禁止ping"></a>禁止ping</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 禁止ping规则</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --permanent --add-rich-rule=&#x27;rule protocol value=icmp drop&#x27;</span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> reload生效</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --reload </span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看是否有该规则</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-rich-rule=&#x27;rule protocol value=&#x27;icmp&#x27; drop&#x27;</span><br><span class="line">yes</span><br></pre></td></tr></table></figure>
+
+<h3 id="禁止IP访问"><a href="#禁止IP访问" class="headerlink" title="禁止IP访问"></a>禁止IP访问</h3><h4 id="禁止某个IP访问"><a href="#禁止某个IP访问" class="headerlink" title="禁止某个IP访问"></a>禁止某个IP访问</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 禁止192.168.100.28访问</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd  --add-rich-rule=&#x27;rule family=ipv4 source address=192.168.100.28/32 drop&#x27;</span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看该规则是否存在</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-rich-rule &#x27;rule family=ipv4 source address=192.168.100.28/32 drop&#x27;</span><br><span class="line">yes</span><br></pre></td></tr></table></figure>
+
+<h4 id="禁止某个网段访问"><a href="#禁止某个网段访问" class="headerlink" title="禁止某个网段访问"></a>禁止某个网段访问</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 禁止192.168.100.0网段访问</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-rich-rule=&#x27;rule family=ipv4 source address=192.168.100.0/24 drop&#x27;</span><br><span class="line">success</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看该规则是否存在</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-rule=&#x27;rule family=ipv4 source address=192.168.100.0/24 drop&#x27;</span><br><span class="line">yes</span><br></pre></td></tr></table></figure>
+
+<h4 id="限制只允许某个IP访问某个端口"><a href="#限制只允许某个IP访问某个端口" class="headerlink" title="限制只允许某个IP访问某个端口"></a>限制只允许某个IP访问某个端口</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 限制只允许192.168.100.1访问本机3306端口，需要reload生效</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-rich-rule=&#x27;rule family=ipv4 source address=192.168.100.1 port protocol=tcp port=3306 accept&#x27;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看该规则是否存在</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-rich-rule=&#x27;rule family=ipv4 source address=192.168.100.1 port protocol=tcp port=3306 accept&#x27;</span><br></pre></td></tr></table></figure>
+
+<h4 id="禁止某个IP访问某个端口"><a href="#禁止某个IP访问某个端口" class="headerlink" title="禁止某个IP访问某个端口"></a>禁止某个IP访问某个端口</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 禁止192.168.100.28访问22端口</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --add-rich-rule=&#x27;rule family=ipv4 source address=192.168.100.28 port port=22 protocol=tcp reject&#x27;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看该规则是否存在</span></span><br><span class="line">[root@srv01 ~]# firewall-cmd --query-rich-rule=&#x27;rule family=ipv4 source address=192.168.100.28 port port=22 protocol=tcp reject&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="清空防火墙规则"><a href="#清空防火墙规则" class="headerlink" title="清空防火墙规则"></a>清空防火墙规则</h3><p>默认没有该功能，但是可以通过编辑xml文件实现。可以复制默认规则的文件到覆盖配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@proxy02 ~]# cp -a /usr/lib/firewalld/zones/public.xml /etc/firewalld/zones/public.xml</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Firewalld/" rel="tag"># Firewalld</a>
+              <a href="/tags/%E9%98%B2%E7%81%AB%E5%A2%99/" rel="tag"># 防火墙</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/b7935aba.html" rel="prev" title="Keepalived+Nginx高可用配置">
+                  <i class="fa fa-chevron-left"></i> Keepalived+Nginx高可用配置
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/31f702e9.html" rel="next" title="SSH配置优化">
+                  SSH配置优化 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanlay</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">200k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:02</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"jsonPath":"live2d-widget-model-wanko"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"log":false,"tagMode":false});</script></body>
+</html>
