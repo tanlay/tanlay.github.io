@@ -78,8 +78,6 @@
 </noscript>
 
 
-  <!-- 点击红心 -->
-  <script type="text/javascript" src="/js/clicklove.js"></script>
   <!--pjax：防止跳转页面音乐暂停-->
   <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
 
@@ -517,7 +515,7 @@
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
@@ -623,10 +621,24 @@ window.addEventListener('pjax:success', () => {
 
     </div>
 
+	<!--引入aplayer-->
     <link rel="stylesheet" href="/dist/APlayer.min.css">
     <div id="aplayer"></div>
     <script type="text/javascript" src="/dist/APlayer.min.js"></script>
     <script type="text/javascript" src="/dist/music.js"></script>
+	<!--引入aplayer-->
+
+	<!-- 点击红心 -->
+	
+	<!-- 点击红心 -->
+
+	<!--引入爆炸效果-->
+	
+	<canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+	<script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+	<script type="text/javascript" src="/js/fireworks.js"></script>
+	
+	<!--引入爆炸效果-->
 
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>
