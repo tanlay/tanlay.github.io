@@ -61,46 +61,10 @@ const ap = new APlayer({
 		cover: 'http://p3.music.126.net/Z3UPSHkpGsKQ8Md4v3cDAQ==/109951165455249371.jpg',
       },
       {
-        name: '我们都一样',
-        artist: '张杰',
-        url: 'http://music.163.com/song/media/outer/url?id=191252.mp3',
-		cover: 'http://p4.music.126.net/ixIs5kkukgNYMmeDsc35_g==/29686813955450.jpg?',
-      },
-      {
-        name: '追梦人',
-        artist: '凤飞飞',
-        url: 'http://music.163.com/song/media/outer/url?id=231412.mp3',
-		cover: 'http://p3.music.126.net/paOXNZrpNi6R69wCnu-85w==/19183179370087476.jpg',
-      },
-      {
-        name: '最美的期待',
-        artist: '周笔畅',
-        url: 'http://music.163.com/song/media/outer/url?id=531295576.mp3',
-		cover: 'http://p4.music.126.net/mwCUI0iL3xEC2a4WVICHlA==/109951163115369030.jpg',
-      },
-      {
-        name: '麻雀',
-        artist: '李荣浩',
-        url: 'http://music.163.com/song/media/outer/url?id=1407551413.mp3',
-		cover: 'http://p4.music.126.net/JzsER44sOReoM6mR8XKnsw==/109951165182029540.jpg',
-      },
-      {
         name: '大风吹',
         artist: '王赫野',
         url: 'http://music.163.com/song/media/outer/url?id=1826179038.mp3',
 		cover: 'http://p3.music.126.net/w1IbAZckwMV51df8SuP1lw==/109951165959142765.jpg',
-      },
-      {
-        name: '囚鸟',
-        artist: '彭玲',
-        url: 'http://music.163.com/song/media/outer/url?id=5252280.mp3',
-		cover: 'http://p3.music.126.net/nf3Vm1TADSzhD4AJyzZBhA==/109951163376713931.jpg',
-      },
-      {
-        name: '往后余生',
-        artist: '马良',
-        url: 'http://music.163.com/song/media/outer/url?id=557584888.mp3',
-		cover: 'http://p4.music.126.net/_QqIAZgDGKEimPQgzTCKGQ==/109951165325675186.jpg',
       },
       {
         name: 'Cry On My Shoulder',
@@ -150,12 +114,6 @@ const ap = new APlayer({
         url: 'http://music.163.com/song/media/outer/url?id=65538.mp3',
 		cover: 'http://p3.music.126.net/o_OjL_NZNoeog9fIjBXAyw==/18782957139233959.jpg',
       },
-	  {
-        name: '海角七号',
-        artist: '东来东往',
-        url: 'http://music.163.com/song/media/outer/url?id=1479528069.mp3',
-		cover: 'http://p3.music.126.net/oCGdUONX4ehpqhQnXnKj-Q==/109951165319853977.jpg',
-      }
     ]
 });
 
