@@ -22,7 +22,19 @@ const ap = new APlayer({
         name: '像我这样的人',
         artist: '毛不易',
         url: 'http://music.163.com/song/media/outer/url?id=569213220.mp3',
-        cover: 'http://p3.music.126.net/vmCcDvD1H04e9gm97xsCqg==/109951163350929740.jpg'
+        cover: 'http://p3.music.126.net/vmCcDvD1H04e9gm97xsCqg==/109951163350929740.jpg',
+      },
+      {
+        name: '金玉良缘',
+        artist: '李琦',
+        url: 'http://music.163.com/song/media/outer/url?id=28457938.mp3',
+        cover: 'http://p4.music.126.net/titGrI5ym67xGxjTFlsmmg==/6055010534457042.jpg',
+      },
+      {
+        name: '信仰',
+        artist: '张信哲',
+        url: 'http://music.163.com/song/media/outer/url?id=402073804.mp3',
+        cover: 'http://p4.music.126.net/_5NqGU4KU06j7T0N-ahVLg==/1410673418999648.jpg',
       },
       {
         name: '光年之外',
