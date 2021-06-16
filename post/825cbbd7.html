@@ -20,20 +20,21 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":8,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="磁盘阵列（Redundant Arrays of Independent Drives，RAID），有“独立磁盘构成的具有冗余能力的阵列”之意。磁盘阵列是由很多块独立的磁盘，组合成一个容量巨大的磁盘组，利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能。利用这项技术，将数据切割成许多区段，分别存放在各个硬盘上。">
+  <meta name="description" content="Linux find 命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则 find 命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Raid特点和与原理">
-<meta property="og:url" content="http://example.com/post/f9b9a850.html">
+<meta property="og:title" content="find命令常用操作">
+<meta property="og:url" content="http://example.com/post/825cbbd7.html">
 <meta property="og:site_name" content="Tanlay">
-<meta property="og:description" content="磁盘阵列（Redundant Arrays of Independent Drives，RAID），有“独立磁盘构成的具有冗余能力的阵列”之意。磁盘阵列是由很多块独立的磁盘，组合成一个容量巨大的磁盘组，利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能。利用这项技术，将数据切割成许多区段，分别存放在各个硬盘上。">
+<meta property="og:description" content="Linux find 命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则 find 命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-06-10T14:26:13.000Z">
-<meta property="article:modified_time" content="2021-06-10T14:26:48.544Z">
+<meta property="article:published_time" content="2021-06-16T04:00:25.000Z">
+<meta property="article:modified_time" content="2021-06-16T04:01:42.521Z">
 <meta property="article:author" content="tanlay">
-<meta property="article:tag" content="RAID">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="系统命令">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/post/f9b9a850.html">
+<link rel="canonical" href="http://example.com/post/825cbbd7.html">
 
 
 <script id="page-configurations">
@@ -46,7 +47,7 @@
   };
 </script>
 
-  <title>Raid特点和与原理 | Tanlay</title>
+  <title>find命令常用操作 | Tanlay</title>
   
 
 
@@ -196,7 +197,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/post/f9b9a850.html">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/825cbbd7.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/pkq.jpg">
@@ -209,7 +210,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Raid特点和与原理
+          find命令常用操作
         </h1>
 
         <div class="post-meta">
@@ -220,7 +221,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-06-10 22:26:13 / 修改时间：22:26:48" itemprop="dateCreated datePublished" datetime="2021-06-10T22:26:13+08:00">2021-06-10</time>
+              <time title="创建时间：2021-06-16 12:00:25 / 修改时间：12:01:42" itemprop="dateCreated datePublished" datetime="2021-06-16T12:00:25+08:00">2021-06-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -228,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">磁盘管理</span></a>
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">系统管理</span></a>
                 </span>
             </span>
 
@@ -245,14 +246,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -264,35 +265,55 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>磁盘阵列（Redundant Arrays of Independent Drives，RAID），有“独立磁盘构成的具有冗余能力的阵列”之意。磁盘阵列是由很多块独立的磁盘，组合成一个容量巨大的磁盘组，利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能。利用这项技术，将数据切割成许多区段，分别存放在各个硬盘上。</p>
+        <p>Linux find 命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则 find 命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。</p>
 <span id="more"></span>
 
-<h3 id="RAID种类"><a href="#RAID种类" class="headerlink" title="RAID种类"></a>RAID种类</h3><h4 id="RAID0（独立磁盘冗余阵列）"><a href="#RAID0（独立磁盘冗余阵列）" class="headerlink" title="RAID0（独立磁盘冗余阵列）"></a>RAID0（独立磁盘冗余阵列）</h4><p>称为Stripping条带存储技术（条带），所有磁盘完全地并行读，并行写，是组建磁盘阵列最简单的一种形式，只需要2块以上的硬盘即可，成本低，可以提供整个磁盘的性能和吞吐量，但RAID 0没有提供数据冗余和错误修复功能，因此单块硬盘的损坏会导致所有的数据丢失。（提高读写性能，无备份，成本最低）</p>
+<h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><h4 id="列出指定目录下的所有文件和子目录"><a href="#列出指定目录下的所有文件和子目录" class="headerlink" title="列出指定目录下的所有文件和子目录"></a>列出指定目录下的所有文件和子目录</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 列出当前目录下的所有文件及子目录</span></span><br><span class="line">find . </span><br></pre></td></tr></table></figure>
+
+<h4 id="否定参数-排除指定的模式"><a href="#否定参数-排除指定的模式" class="headerlink" title="否定参数,排除指定的模式"></a>否定参数,排除指定的模式</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 列出当前目录下文件名不包含<span class="built_in">log</span>的文件</span></span><br><span class="line">find . ! -name &quot;*.log*&quot; -type f </span><br></pre></td></tr></table></figure>
+
+<h4 id="基于目录深度搜索"><a href="#基于目录深度搜索" class="headerlink" title="基于目录深度搜索"></a>基于目录深度搜索</h4><p>find命令使用-maxdepth和-mindepth限制find命令遍历的目录深度，并且find命令默认不搜索符号链接，可以指定-L选项来搜索符号链接。-mindepth参数代表了开始进行匹配的目录到指定目录的最短层级，而-maxdepth参数代表了开始进行匹配的目录到指定目录的最长层级。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 当前目录下最多搜索两层</span></span><br><span class="line">find . -maxdepth 2 </span><br><span class="line"><span class="meta">#</span><span class="bash"> 当前目录下最少搜索两层</span></span><br><span class="line">find . -mindepth 2 </span><br></pre></td></tr></table></figure>
+
+<h4 id="基于文件类型搜搜"><a href="#基于文件类型搜搜" class="headerlink" title="基于文件类型搜搜"></a>基于文件类型搜搜</h4><p>find命令使用-type选项可以指定搜索的文件类型，linux系统将一切都看成文件。</p>
+<p>文件类型有以下几种：</p>
 <ul>
-<li>使用两块或两块以上的硬盘组成</li>
-<li>每块硬盘的大小必须一致</li>
-<li>是所有RAID中，数据读写最快的</li>
-<li>损坏几率相对较高</li>
-<li>没有磁盘容错功能<h4 id="RAID1"><a href="#RAID1" class="headerlink" title="RAID1"></a>RAID1</h4>镜像存储，通过把两块磁盘中的一块磁盘的数据镜像到另一块磁盘上， 实现数据冗余，在两块磁盘上产生互为备份的数据，其容量仅等于一块磁盘的容量。当数据在写入一块磁盘时，会在另一块闲置的磁盘上生产镜像，在不影响性能情况下最大限度的保证系统的可靠性和可修复性；当原始数据繁忙时，可直接从镜像拷贝中读取数据（从两块硬盘中较快的一块中读出），提高读取性能。相反的，RAID 1的写入速度较缓慢。RAID 1一般支持“热交换”，即阵列中硬盘的移除或替换可以在系统运行状态下进行，无须中断退出系统。RAID 1是磁盘阵列中硬盘单位成本最高的，但它提供了很高的数据安全性、可靠性和可用性，当一块硬盘失效时，系统可以自动切换到镜像磁盘上读写，而不需要重组失效的数据。（提高读速度，降低写速度，有备份，成本最高）</li>
-<li>由两块或2的倍数块磁盘组成</li>
-<li>每块磁盘大小必须一致</li>
-<li>磁盘使用率未50%,写入速度慢</li>
-<li>拥有磁盘容错功能<h4 id="RAID5"><a href="#RAID5" class="headerlink" title="RAID5"></a>RAID5</h4>是一种存储性能、数据安全和存储成本兼顾的存储解决方案。RAID 5可以理解为是RAID 0和RAID 1的折衷方案，RAID 5至少需要三块硬盘。RAID 5可以为系统提供数据安全保障，但保障程度要比镜像低而磁盘空间利用率要比镜像高。RAID 5具有和RAID 0相近似的数据读取速度，只是多了一个奇偶校验信息，写入数据的速度比对单个磁盘进行写入操作稍慢。同时由于多个数据对应一个奇偶校验信息，RAID 5的磁盘空间利用率要比RAID 1高，存储成本相对较低，是目前运用较多的一种解决方案。</li>
-<li>由三块或三块以上硬盘组成</li>
-<li>每块硬盘的大小一致</li>
-<li>磁盘利用率为n-1块盘</li>
-<li>利用奇偶校验，拥有磁盘容错功能，只支持一块盘损坏<h4 id="RAID6"><a href="#RAID6" class="headerlink" title="RAID6"></a>RAID6</h4></li>
-<li>RAID6是RAID5的增强版</li>
-<li>由四块盘组成</li>
-<li>每块盘的大小一致</li>
-<li>磁盘利用率是n-2快盘</li>
-<li>支持磁盘容错，可以支持2块磁盘损坏<h4 id="RAID10"><a href="#RAID10" class="headerlink" title="RAID10"></a>RAID10</h4>实际是将RAID 0和RAID 1结合的形式，在连续地以位或字节为单位分割数据并且并行读/写多个磁盘的同时，为每一块磁盘做镜像进行冗余。通过RAID 0+1的组合形式，数据除分布在多个盘上外，每个盘都有其物理镜像盘，提供冗余能力，允许一个以下磁盘故障，而不影响数据可用性，并且有快速读/写能力。RAID 0+1至少需要4个硬盘在磁盘镜像中建立带区集。RAID 0+1技术在保证数据高可靠性的同时，也保证了数据读/写的高效性。</li>
-<li>必须有4块等大小的盘组成</li>
-<li>两两先组成RAID1，在组成RAID0</li>
-<li>兼顾RAID0和RAID1的优缺点</li>
+<li>普通文件：f</li>
+<li>目录：d</li>
+<li>符号链接：l</li>
+<li>字符设备：c</li>
+<li>块设备：b</li>
+<li>套接字：s</li>
 </ul>
-<h4 id="RAID分类"><a href="#RAID分类" class="headerlink" title="RAID分类"></a>RAID分类</h4><h5 id="软RAID"><a href="#软RAID" class="headerlink" title="软RAID"></a>软RAID</h5><p>有操作系统模拟的RAID,一旦硬盘损坏，操作系统损坏，RAID就丧失作用</p>
-<h4 id="硬RAID"><a href="#硬RAID" class="headerlink" title="硬RAID"></a>硬RAID</h4><p>是有独立于硬盘之外的，硬件RAID卡组成，就算硬盘损坏，也不会导致RAID卡损坏，磁盘冗余才起作用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 搜索当前目录下的目录</span></span><br><span class="line">find . -type d </span><br><span class="line"><span class="meta">#</span><span class="bash"> 搜索当前目录下的普通文件</span></span><br><span class="line">find . -type f </span><br></pre></td></tr></table></figure>
+
+<h4 id="根据文件的时间属性进行搜索"><a href="#根据文件的时间属性进行搜索" class="headerlink" title="根据文件的时间属性进行搜索"></a>根据文件的时间属性进行搜索</h4><p>Linux文件系统中每个文件都有三种时间属性。单位为天，用整数指定数字前可以加上（+号-号或不加），数字为正表示大于这个时间。数字为负表示小于这个时间。不加刚好表示这一天。</p>
+<ul>
+<li>-atime （文件中数据被访问时间）</li>
+<li>-mtime （文件内容被修改的时间）</li>
+<li>-ctime （文件元数据被修改的时间，如权限、所有者）</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下5天之内被访问的文件</span></span><br><span class="line">find . -atime -5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下5天前修改过的文件</span></span><br><span class="line">find . -mtime +5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下前5天修改就改过元数据的文件</span></span><br><span class="line">find . -ctime 5 -name &quot;*.txt&quot; </span><br></pre></td></tr></table></figure>
+
+<p>当然可以通过以下选项指定分钟级别的时间属性</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> <span class="comment"># 查看当前目录下5分钟之内被访问的文件</span></span></span><br><span class="line">find . -amin -5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下5分钟前修改过的文件</span></span><br><span class="line">find . -mmin +5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下前5分钟修改就改过元数据的文件</span></span><br><span class="line">find . -cmin 5 -name &quot;*.txt&quot; </span><br></pre></td></tr></table></figure>
+
+<h4 id="基于文件大小搜索"><a href="#基于文件大小搜索" class="headerlink" title="基于文件大小搜索"></a>基于文件大小搜索</h4><p>find命令可以通过指定文件大小进行文件搜索，可以指定相应的单位来搜索</p>
+<ul>
+<li>-b：位</li>
+<li>-c：字节</li>
+<li>-k：千字节</li>
+<li>-M：兆字节</li>
+<li>-G：吉字节</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">  查找当前目录下文件大于30k的文件</span> </span><br><span class="line">find . -size +30k</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查找当前目录下文件小于30M的文件</span> </span><br><span class="line">find . -size +30M</span><br></pre></td></tr></table></figure>
+
+<h4 id="基于文件权限和所有权的匹配"><a href="#基于文件权限和所有权的匹配" class="headerlink" title="基于文件权限和所有权的匹配"></a>基于文件权限和所有权的匹配</h4><p>find命令提欧了-perm选项来匹配文件权限，参数为文件对应的权限码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下文件权限为0600的所有文件</span></span><br><span class="line">find . -perm 0600</span><br></pre></td></tr></table></figure>
+
+<h3 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h3><h4 id="find查询最近30天的垃圾文件并删除"><a href="#find查询最近30天的垃圾文件并删除" class="headerlink" title="find查询最近30天的垃圾文件并删除"></a>find查询最近30天的垃圾文件并删除</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天的垃圾文件并使用-<span class="built_in">exec</span>删除</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 -exec rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天的垃圾文件并使用-ok删除（每一个文件删除都需要确认）</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 -ok rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天的垃圾文件并使用xargs删除</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 | xargs -i -t  rm &#123;&#125; </span><br></pre></td></tr></table></figure>
+
+<h4 id="find查询30天之前的日志文件并删除"><a href="#find查询30天之前的日志文件并删除" class="headerlink" title="find查询30天之前的日志文件并删除"></a>find查询30天之前的日志文件并删除</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天之前的垃圾文件并使用-<span class="built_in">exec</span>删除</span></span><br><span class="line">find -type f -name &quot;*.log*&quot; -mtime +30 -exec rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天之前的垃圾文件并使用-ok删除（每一个文件删除都需要确认）</span></span><br><span class="line">find -type f -name &quot;*.log*&quot; -mtime +30 -ok rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash">find查找最近30天之前的垃圾文件并使用xargs删除</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 | xargs -i -t  rm &#123;&#125; </span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -311,7 +332,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/RAID/" rel="tag"><i class="fa fa-tag"></i> RAID</a>
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+              <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4/" rel="tag"><i class="fa fa-tag"></i> 系统命令</a>
           </div>
 
         
@@ -320,13 +342,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/post/1ef71e38.html" rel="prev" title="Dockerfile实践">
-      <i class="fa fa-chevron-left"></i> Dockerfile实践
+    <a href="/post/b9cacce1.html" rel="prev" title="Postgresql96主从架构部署">
+      <i class="fa fa-chevron-left"></i> Postgresql96主从架构部署
     </a></div>
-      <div class="post-nav-item">
-    <a href="/post/9429c738.html" rel="next" title="Centos7网卡名称修改及root密码重置">
-      Centos7网卡名称修改及root密码重置 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -385,7 +404,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#RAID%E7%A7%8D%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">RAID种类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID0%EF%BC%88%E7%8B%AC%E7%AB%8B%E7%A3%81%E7%9B%98%E5%86%97%E4%BD%99%E9%98%B5%E5%88%97%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">RAID0（独立磁盘冗余阵列）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID1"><span class="nav-number">1.2.</span> <span class="nav-text">RAID1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID5"><span class="nav-number">1.3.</span> <span class="nav-text">RAID5</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID6"><span class="nav-number">1.4.</span> <span class="nav-text">RAID6</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID10"><span class="nav-number">1.5.</span> <span class="nav-text">RAID10</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAID%E5%88%86%E7%B1%BB"><span class="nav-number">1.6.</span> <span class="nav-text">RAID分类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BD%AFRAID"><span class="nav-number">1.6.1.</span> <span class="nav-text">软RAID</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%ACRAID"><span class="nav-number">1.7.</span> <span class="nav-text">硬RAID</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#find%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">find命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">基本用法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6%E5%92%8C%E5%AD%90%E7%9B%AE%E5%BD%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">列出指定目录下的所有文件和子目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%A6%E5%AE%9A%E5%8F%82%E6%95%B0-%E6%8E%92%E9%99%A4%E6%8C%87%E5%AE%9A%E7%9A%84%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">否定参数,排除指定的模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%9B%AE%E5%BD%95%E6%B7%B1%E5%BA%A6%E6%90%9C%E7%B4%A2"><span class="nav-number">1.1.3.</span> <span class="nav-text">基于目录深度搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B%E6%90%9C%E6%90%9C"><span class="nav-number">1.1.4.</span> <span class="nav-text">基于文件类型搜搜</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E6%96%87%E4%BB%B6%E7%9A%84%E6%97%B6%E9%97%B4%E5%B1%9E%E6%80%A7%E8%BF%9B%E8%A1%8C%E6%90%9C%E7%B4%A2"><span class="nav-number">1.1.5.</span> <span class="nav-text">根据文件的时间属性进行搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E5%A4%A7%E5%B0%8F%E6%90%9C%E7%B4%A2"><span class="nav-number">1.1.6.</span> <span class="nav-text">基于文件大小搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E5%92%8C%E6%89%80%E6%9C%89%E6%9D%83%E7%9A%84%E5%8C%B9%E9%85%8D"><span class="nav-number">1.1.7.</span> <span class="nav-text">基于文件权限和所有权的匹配</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%BC%E5%90%88%E6%A1%88%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">综合案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#find%E6%9F%A5%E8%AF%A2%E6%9C%80%E8%BF%9130%E5%A4%A9%E7%9A%84%E5%9E%83%E5%9C%BE%E6%96%87%E4%BB%B6%E5%B9%B6%E5%88%A0%E9%99%A4"><span class="nav-number">1.2.1.</span> <span class="nav-text">find查询最近30天的垃圾文件并删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#find%E6%9F%A5%E8%AF%A230%E5%A4%A9%E4%B9%8B%E5%89%8D%E7%9A%84%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6%E5%B9%B6%E5%88%A0%E9%99%A4"><span class="nav-number">1.2.2.</span> <span class="nav-text">find查询30天之前的日志文件并删除</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

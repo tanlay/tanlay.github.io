@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-06-11T07:18:40.652Z</updated>
+  <updated>2021-06-16T04:01:42.521Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>find命令常用操作</title>
+    <link href="http://example.com/post/825cbbd7.html"/>
+    <id>http://example.com/post/825cbbd7.html</id>
+    <published>2021-06-16T04:00:25.000Z</published>
+    <updated>2021-06-16T04:01:42.521Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;Linux find 命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则 find 命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
+    
+    
+    <category term="Linux" scheme="http://example.com/tags/Linux/"/>
+    
+    <category term="系统命令" scheme="http://example.com/tags/%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4/"/>
+    
+  </entry>
   
   <entry>
     <title>Postgresql96主从架构部署</title>
@@ -386,25 +407,6 @@
     
     
     <category term="网卡配置" scheme="http://example.com/tags/%E7%BD%91%E5%8D%A1%E9%85%8D%E7%BD%AE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Raid特点和与原理</title>
-    <link href="http://example.com/post/f9b9a850.html"/>
-    <id>http://example.com/post/f9b9a850.html</id>
-    <published>2021-06-10T14:26:13.000Z</published>
-    <updated>2021-06-10T14:26:48.544Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;磁盘阵列（Redundant Arrays of Independent Drives，RAID），有“独立磁盘构成的具有冗余能力的阵列”之意。磁盘阵列是由很多块独立的磁盘，组合成一个容量巨大的磁盘组，利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能。利用这项技术，将数据切割成许多区段，分别存放在各个硬盘上。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="磁盘管理" scheme="http://example.com/categories/%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/"/>
-    
-    
-    <category term="RAID" scheme="http://example.com/tags/RAID/"/>
     
   </entry>
   

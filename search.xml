@@ -1249,6 +1249,67 @@
       </tags>
   </entry>
   <entry>
+    <title>find命令常用操作</title>
+    <url>/post/825cbbd7.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>Linux find 命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则 find 命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。</p>
+<span id="more"></span>
+
+<h2 id="find命令"><a href="#find命令" class="headerlink" title="find命令"></a>find命令</h2><h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><h4 id="列出指定目录下的所有文件和子目录"><a href="#列出指定目录下的所有文件和子目录" class="headerlink" title="列出指定目录下的所有文件和子目录"></a>列出指定目录下的所有文件和子目录</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 列出当前目录下的所有文件及子目录</span></span><br><span class="line">find . </span><br></pre></td></tr></table></figure>
+
+<h4 id="否定参数-排除指定的模式"><a href="#否定参数-排除指定的模式" class="headerlink" title="否定参数,排除指定的模式"></a>否定参数,排除指定的模式</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 列出当前目录下文件名不包含<span class="built_in">log</span>的文件</span></span><br><span class="line">find . ! -name &quot;*.log*&quot; -type f </span><br></pre></td></tr></table></figure>
+
+<h4 id="基于目录深度搜索"><a href="#基于目录深度搜索" class="headerlink" title="基于目录深度搜索"></a>基于目录深度搜索</h4><p>find命令使用-maxdepth和-mindepth限制find命令遍历的目录深度，并且find命令默认不搜索符号链接，可以指定-L选项来搜索符号链接。-mindepth参数代表了开始进行匹配的目录到指定目录的最短层级，而-maxdepth参数代表了开始进行匹配的目录到指定目录的最长层级。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 当前目录下最多搜索两层</span></span><br><span class="line">find . -maxdepth 2 </span><br><span class="line"><span class="meta">#</span><span class="bash"> 当前目录下最少搜索两层</span></span><br><span class="line">find . -mindepth 2 </span><br></pre></td></tr></table></figure>
+
+<h4 id="基于文件类型搜搜"><a href="#基于文件类型搜搜" class="headerlink" title="基于文件类型搜搜"></a>基于文件类型搜搜</h4><p>find命令使用-type选项可以指定搜索的文件类型，linux系统将一切都看成文件。</p>
+<p>文件类型有以下几种：</p>
+<ul>
+<li>普通文件：f</li>
+<li>目录：d</li>
+<li>符号链接：l</li>
+<li>字符设备：c</li>
+<li>块设备：b</li>
+<li>套接字：s</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 搜索当前目录下的目录</span></span><br><span class="line">find . -type d </span><br><span class="line"><span class="meta">#</span><span class="bash"> 搜索当前目录下的普通文件</span></span><br><span class="line">find . -type f </span><br></pre></td></tr></table></figure>
+
+<h4 id="根据文件的时间属性进行搜索"><a href="#根据文件的时间属性进行搜索" class="headerlink" title="根据文件的时间属性进行搜索"></a>根据文件的时间属性进行搜索</h4><p>Linux文件系统中每个文件都有三种时间属性。单位为天，用整数指定数字前可以加上（+号-号或不加），数字为正表示大于这个时间。数字为负表示小于这个时间。不加刚好表示这一天。</p>
+<ul>
+<li>-atime （文件中数据被访问时间）</li>
+<li>-mtime （文件内容被修改的时间）</li>
+<li>-ctime （文件元数据被修改的时间，如权限、所有者）</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下5天之内被访问的文件</span></span><br><span class="line">find . -atime -5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下5天前修改过的文件</span></span><br><span class="line">find . -mtime +5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下前5天修改就改过元数据的文件</span></span><br><span class="line">find . -ctime 5 -name &quot;*.txt&quot; </span><br></pre></td></tr></table></figure>
+
+<p>当然可以通过以下选项指定分钟级别的时间属性</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> <span class="comment"># 查看当前目录下5分钟之内被访问的文件</span></span></span><br><span class="line">find . -amin -5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下5分钟前修改过的文件</span></span><br><span class="line">find . -mmin +5 -name &#x27;*.txt&#x27; </span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下前5分钟修改就改过元数据的文件</span></span><br><span class="line">find . -cmin 5 -name &quot;*.txt&quot; </span><br></pre></td></tr></table></figure>
+
+<h4 id="基于文件大小搜索"><a href="#基于文件大小搜索" class="headerlink" title="基于文件大小搜索"></a>基于文件大小搜索</h4><p>find命令可以通过指定文件大小进行文件搜索，可以指定相应的单位来搜索</p>
+<ul>
+<li>-b：位</li>
+<li>-c：字节</li>
+<li>-k：千字节</li>
+<li>-M：兆字节</li>
+<li>-G：吉字节</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">  查找当前目录下文件大于30k的文件</span> </span><br><span class="line">find . -size +30k</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查找当前目录下文件小于30M的文件</span> </span><br><span class="line">find . -size +30M</span><br></pre></td></tr></table></figure>
+
+<h4 id="基于文件权限和所有权的匹配"><a href="#基于文件权限和所有权的匹配" class="headerlink" title="基于文件权限和所有权的匹配"></a>基于文件权限和所有权的匹配</h4><p>find命令提欧了-perm选项来匹配文件权限，参数为文件对应的权限码</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看当前目录下文件权限为0600的所有文件</span></span><br><span class="line">find . -perm 0600</span><br></pre></td></tr></table></figure>
+
+<h3 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h3><h4 id="find查询最近30天的垃圾文件并删除"><a href="#find查询最近30天的垃圾文件并删除" class="headerlink" title="find查询最近30天的垃圾文件并删除"></a>find查询最近30天的垃圾文件并删除</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天的垃圾文件并使用-<span class="built_in">exec</span>删除</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 -exec rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天的垃圾文件并使用-ok删除（每一个文件删除都需要确认）</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 -ok rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天的垃圾文件并使用xargs删除</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 | xargs -i -t  rm &#123;&#125; </span><br></pre></td></tr></table></figure>
+
+<h4 id="find查询30天之前的日志文件并删除"><a href="#find查询30天之前的日志文件并删除" class="headerlink" title="find查询30天之前的日志文件并删除"></a>find查询30天之前的日志文件并删除</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天之前的垃圾文件并使用-<span class="built_in">exec</span>删除</span></span><br><span class="line">find -type f -name &quot;*.log*&quot; -mtime +30 -exec rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash"> find查找最近30天之前的垃圾文件并使用-ok删除（每一个文件删除都需要确认）</span></span><br><span class="line">find -type f -name &quot;*.log*&quot; -mtime +30 -ok rm &#123;&#125; \;</span><br><span class="line"><span class="meta">#</span><span class="bash">find查找最近30天之前的垃圾文件并使用xargs删除</span></span><br><span class="line">find -type f -name &quot;*.trash*&quot; -mtime -30 | xargs -i -t  rm &#123;&#125; </span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>系统管理</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>系统命令</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s-一个简单的例子</title>
     <url>/post/d6261197.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>使用k8s部署一个Java WEB应用。该应用运行在Tomcat里的Web App。需要启动两个容器：WEB容器和MySQL容器，并且Web App需要访问MySQL容器。</p>
