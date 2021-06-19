@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-06-16T04:01:42.521Z</updated>
+  <updated>2021-06-19T11:21:02.553Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Centos7使用kubeadm部署k8s集群</title>
+    <link href="http://example.com/post/8fa46076.html"/>
+    <id>http://example.com/post/8fa46076.html</id>
+    <published>2021-06-19T11:20:00.000Z</published>
+    <updated>2021-06-19T11:21:02.553Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;使用kubectl安装k8s集群&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="容器技术" scheme="http://example.com/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
+    
+    
+    <category term="k8s" scheme="http://example.com/tags/k8s/"/>
+    
+  </entry>
   
   <entry>
     <title>find命令常用操作</title>
@@ -388,25 +407,6 @@
     
     
     <category term="网络测试" scheme="http://example.com/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Centos7网卡名称修改及root密码重置</title>
-    <link href="http://example.com/post/9429c738.html"/>
-    <id>http://example.com/post/9429c738.html</id>
-    <published>2021-06-10T14:27:14.000Z</published>
-    <updated>2021-06-11T07:22:29.850Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;CentOS7服务器，默认网卡名为ifcfg-eno16777736，怎么修改成ifcfg-eth0, 忘记root密码该怎么办？&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
-    
-    
-    <category term="网卡配置" scheme="http://example.com/tags/%E7%BD%91%E5%8D%A1%E9%85%8D%E7%BD%AE/"/>
     
   </entry>
   
