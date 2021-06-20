@@ -2543,7 +2543,7 @@
   <entry>
     <title>Centos7使用kubeadm部署k8s集群</title>
     <url>/post/8fa46076.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>使用kubectl安装k8s集群</p>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>kubeadm是官方社区推出的一个用于快速部署kubernetes集群的工具。使用kubeadm能通过两条指令完成一个kubernetes集群的部署：</p>
 <span id="more"></span>
 
 
