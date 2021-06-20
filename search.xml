@@ -2546,7 +2546,6 @@
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>kubeadm是官方社区推出的一个用于快速部署kubernetes集群的工具。使用kubeadm能通过两条指令完成一个kubernetes集群的部署。</p>
 <span id="more"></span>
 
-
 <h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><table>
 <thead>
 <tr>
@@ -2582,15 +2581,23 @@
 <h2 id="所有节点"><a href="#所有节点" class="headerlink" title="所有节点"></a>所有节点</h2><p>为了保证集群间通信，需要配置防火墙、Selinux、Hosts文件，此环境直接关闭防火墙、Selinux。以下操作需要在所有节点上执行。</p>
 <h3 id="配置主机名"><a href="#配置主机名" class="headerlink" title="配置主机名"></a>配置主机名</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 设置master01节点主机名</span></span><br><span class="line">[root@ks8-master01 ~]# hostnamectl set-hostname k8s-master01</span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置node01节点主机名</span></span><br><span class="line">[root@ks8-node01 ~]# hostnamectl set-hostname k8s-node01</span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置node02节点主机名</span></span><br><span class="line">[root@ks8-node02 ~]# hostnamectl set-hostname k8s-node02</span><br></pre></td></tr></table></figure>
 
-<h3 id="修改系统时区"><a href="#修改系统时区" class="headerlink" title="修改系统时区"></a>修改系统时区</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">timedatectl set-timezone Asia/Shanghai</span><br></pre></td></tr></table></figure>
-
 <h3 id="修改Hosts文件"><a href="#修改Hosts文件" class="headerlink" title="修改Hosts文件"></a>修改Hosts文件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# cat /etc/hosts</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">192.168.100.71  ks8-master01</span><br><span class="line">192.168.100.81  ks8-node01</span><br><span class="line">192.168.100.82  ks8-node02</span><br></pre></td></tr></table></figure>
 
+<h3 id="关闭swap分区"><a href="#关闭swap分区" class="headerlink" title="关闭swap分区"></a>关闭swap分区</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 临时关闭</span></span><br><span class="line">[root@ks8-master01 ~]# swapoff -a</span><br><span class="line"><span class="meta">#</span><span class="bash"> 永久关闭</span></span><br><span class="line">[root@ks8-master01 ~]# sed -r &#x27;s/.*swap*/#&amp;/&#x27; /etc/fstab</span><br></pre></td></tr></table></figure>
+
 <h3 id="安装基础软件"><a href="#安装基础软件" class="headerlink" title="安装基础软件"></a>安装基础软件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# yum -y install wget net-tools ntp git</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改系统时区"><a href="#修改系统时区" class="headerlink" title="修改系统时区"></a>修改系统时区</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# timedatectl set-timezone Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间同步"><a href="#时间同步" class="headerlink" title="时间同步"></a>时间同步</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# ntpdate ntp1.aliyun.com</span><br></pre></td></tr></table></figure>
+
+
 
 <h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# systemctl stop firewalld</span><br><span class="line">[root@ks8-master01 ~]# systemctl disable firewalld</span><br></pre></td></tr></table></figure>
 
 <h3 id="关闭selinux"><a href="#关闭selinux" class="headerlink" title="关闭selinux"></a>关闭selinux</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# sed -i &#x27;/SELINUX=enforcing/s/enforcing/disabled/g&#x27; /etc/selinux/config</span><br><span class="line">[root@ks8-master01 ~]# setenforce 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="转发流量到iptables链"><a href="#转发流量到iptables链" class="headerlink" title="转发流量到iptables链"></a>转发流量到iptables链</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 配置转发</span></span><br><span class="line">[root@ks8-master01 ~]# cat /etc/sysctl.d/k8s.conf </span><br><span class="line">net.bridge.bridge-nf-call-ip6tables = 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables = 1</span><br><span class="line"><span class="meta">#</span><span class="bash"> 生效</span></span><br><span class="line">sysctl -p /etc/sysctl.d/k8s.conf </span><br></pre></td></tr></table></figure>
 
 <h3 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h3><h4 id="配置docker阿里云源"><a href="#配置docker阿里云源" class="headerlink" title="配置docker阿里云源"></a>配置docker阿里云源</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@ks8-master01 ~]# sudo yum-config-manager \</span><br><span class="line">    --add-repo \</span><br><span class="line">    http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
 
