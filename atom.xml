@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-06-20T06:01:18.968Z</updated>
+  <updated>2021-06-24T08:04:14.980Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>DRBD+NFS+Keepalived高可用集群搭建</title>
+    <link href="http://example.com/post/9a21a8ea.html"/>
+    <id>http://example.com/post/9a21a8ea.html</id>
+    <published>2021-06-24T08:02:48.000Z</published>
+    <updated>2021-06-24T08:04:14.980Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;使用NFS挂载文件时如何保证高可用？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="文件系统" scheme="http://example.com/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
+    
+    
+    <category term="高可用" scheme="http://example.com/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>Centos7使用kubeadm部署k8s集群</title>
@@ -388,25 +407,6 @@
     
     
     <category term="网卡Bond" scheme="http://example.com/tags/%E7%BD%91%E5%8D%A1Bond/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux网络命令的妙用</title>
-    <link href="http://example.com/post/95d1ba91.html"/>
-    <id>http://example.com/post/95d1ba91.html</id>
-    <published>2021-06-10T14:30:15.000Z</published>
-    <updated>2021-06-11T07:26:17.880Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Linux上很多网络工具可以方便运维人员排查系统问题。如下举例其中几个常用的命令记录使用参数。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
-    
-    
-    <category term="网络测试" scheme="http://example.com/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/"/>
     
   </entry>
   

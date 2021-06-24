@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":8,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="使用NFS挂载文件时如何保证高可用？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DRBD+NFS+Keepalived高可用集群搭建">
+<meta property="og:url" content="http://example.com/post/9a21a8ea.html">
+<meta property="og:site_name" content="Tanlay">
+<meta property="og:description" content="使用NFS挂载文件时如何保证高可用？">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-24T08:02:48.000Z">
+<meta property="article:modified_time" content="2021-06-24T08:04:14.980Z">
+<meta property="article:author" content="tanlay">
+<meta property="article:tag" content="高可用">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/post/9a21a8ea.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DRBD+NFS+Keepalived高可用集群搭建 | Tanlay</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+
+  <!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+
+<link rel="alternate" href="/atom.xml" title="Tanlay" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Tanlay</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一口不能吃成胖子</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">37</span></a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">36</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/9a21a8ea.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/pkq.jpg">
+      <meta itemprop="name" content="tanlay">
+      <meta itemprop="description" content="Tanlay的学习记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tanlay">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DRBD+NFS+Keepalived高可用集群搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-24 16:02:48 / 修改时间：16:04:14" itemprop="dateCreated datePublished" datetime="2021-06-24T16:02:48+08:00">2021-06-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用NFS挂载文件时如何保证高可用？</p>
+<span id="more"></span>
+
+
+<h4 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h4><p>VIP：10.3.31.103</p>
+<table>
+<thead>
+<tr>
+<th align="center">服务器</th>
+<th align="center">主机名</th>
+<th align="center">IP地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">主nfs</td>
+<td align="center">nfs-master</td>
+<td align="center">10.3.31.101</td>
+</tr>
+<tr>
+<td align="center">从nfs</td>
+<td align="center">nfs-slave</td>
+<td align="center">10.3.31.102</td>
+</tr>
+</tbody></table>
+<h4 id="修改hosts文件"><a href="#修改hosts文件" class="headerlink" title="修改hosts文件"></a>修改hosts文件</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo -e &quot;10.3.31.101 nfs01.prod\n10.3.31.102 nfs02.prod&quot; &gt;&gt;/etc/hosts</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置drbd"><a href="#配置drbd" class="headerlink" title="配置drbd"></a>配置drbd</h4><p>安装drdb</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line">rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm</span><br><span class="line">yum install drbd84 kmod-drbd84 -y</span><br><span class="line">systemctl enable drbd</span><br></pre></td></tr></table></figure>
+
+<h4 id="导入drbd模块"><a href="#导入drbd模块" class="headerlink" title="导入drbd模块"></a>导入drbd模块</h4><p>内核模块需要大于3.10.0-514.6.1.el7.x86_64，否则会报错，如果报错了，先查看系统上的所有可用内核版本：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">awk -F\&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">yum --enablerepo=elrepo-kernel install kernel-ml     #升级内核</span><br><span class="line">modprobe drbd</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加新硬盘sdb，并初始化"><a href="#添加新硬盘sdb，并初始化" class="headerlink" title="添加新硬盘sdb，并初始化"></a>添加新硬盘sdb，并初始化</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fdisk /dev/sdb           #新建一个分区sdb1</span><br><span class="line">mkfs.ext4 /dev/sdb1</span><br><span class="line">dd if=/dev/zero of=/dev/sdb1 bs=1M count=100</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/drbd.d/global_common.conf</span></span><br><span class="line">global &#123;</span><br><span class="line">    usage-count no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">common &#123;</span><br><span class="line">    protocol C;</span><br><span class="line">    disk &#123;</span><br><span class="line">        on-io-error detach;</span><br><span class="line">    &#125;</span><br><span class="line">    syncer &#123;</span><br><span class="line">        rate 100M;                    ##设置主备节点同步时的网络速率最大值</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">resource data &#123;</span><br><span class="line">    on nfs01.prod &#123;                    #主机名称</span><br><span class="line">        device /dev/drbd1;                     #drbd网络磁盘</span><br><span class="line">        disk /dev/sdb1;                        #本地需要挂载的磁盘</span><br><span class="line">        address 10.3.31.101:7899;              #主ip地址加drbd端口</span><br><span class="line">        meta-disk internal;</span><br><span class="line">    &#125;</span><br><span class="line">    on nfs02.prod &#123;</span><br><span class="line">        device /dev/drbd1;</span><br><span class="line">        disk /dev/sdb1;</span><br><span class="line">        address 10.3.31.102:7899;</span><br><span class="line">        meta-disk internal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动drbd"><a href="#启动drbd" class="headerlink" title="启动drbd"></a>启动drbd</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">drbdadm create-md data     #创建数据目录</span><br><span class="line">systemctl start drbd    #启动drbd服务</span><br><span class="line">systemctl enable drbd    #开机启动</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化主节点（只在主节点上操作）"><a href="#初始化主节点（只在主节点上操作）" class="headerlink" title="初始化主节点（只在主节点上操作）"></a>初始化主节点（只在主节点上操作）</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">drbdadm primary --force data</span><br><span class="line">drbdsetup /dev/drbd1 primary</span><br></pre></td></tr></table></figure>
+
+<h4 id="在master节点挂载drbd1"><a href="#在master节点挂载drbd1" class="headerlink" title="在master节点挂载drbd1"></a>在master节点挂载drbd1</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkfs.ext4 /dev/drbd1</span><br><span class="line">mount /dev/drbd1 /opt/</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试drbd是否可用"><a href="#测试drbd是否可用" class="headerlink" title="测试drbd是否可用"></a>测试drbd是否可用</h4><p>在master(10.3.31.101)的opt中创建一个文件，然后卸载/opt，将当前主节点降级为次</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /opt/test</span><br><span class="line">umount /opt</span><br><span class="line">drbdadm secondary data</span><br></pre></td></tr></table></figure>
+<p>将secondary(10.3.31.102)节点升级为主节点，然后挂载/opt，可用看到在10.2.31.51上创建的文件test存在，说明drbd起作用了</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">drbdadm primary data</span><br><span class="line">mount /dev/drbd1 /opt/</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置nfs服务端，两个节点都要执行"><a href="#配置nfs服务端，两个节点都要执行" class="headerlink" title="配置nfs服务端，两个节点都要执行"></a>配置nfs服务端，两个节点都要执行</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install rpcbind nfs-utils</span><br><span class="line">mkdir -p /opt/logs/upload  /opt/data/pfxfiles /opt/upload</span><br><span class="line">echo -e &quot;/opt/logs/itsp-uploadlog  10.3.31.0/24(rw,no_root_squash,sync)\n/opt/upload 10.3.31.0/24(rw,no_root_squash,sync)\n/opt/data/pfxfiles 10.3.31.0/24(rw,no_root_squash,sync)&quot; &amp;gt;&amp;gt; /etc/exports</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装配置keepalived"><a href="#安装配置keepalived" class="headerlink" title="安装配置keepalived"></a>安装配置keepalived</h4><p>安装keepalived</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install keepalived</span><br><span class="line">systemctl enable keepalived</span><br><span class="line">mkdir /et/keepalived/logs     #创建日志目录</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置主drbd节点（10-3-31-101）"><a href="#配置主drbd节点（10-3-31-101）" class="headerlink" title="配置主drbd节点（10.3.31.101）"></a>配置主drbd节点（10.3.31.101）</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File for keepadlived</span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nfs &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nfs.sh&quot;</span><br><span class="line">    interval 5</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 151</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">    auth_type PASS</span><br><span class="line">    auth_pass 1111</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">    chk_nfs</span><br><span class="line">&#125;</span><br><span class="line">notify_stop /etc/keepalived/notify_stop.sh</span><br><span class="line">notify_master /etc/keepalived/notify_master.sh</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">    10.3.31.103/24</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置备drbd节点（10-3-31-102）"><a href="#配置备drbd节点（10-3-31-102）" class="headerlink" title="配置备drbd节点（10.3.31.102）"></a>配置备drbd节点（10.3.31.102）</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File for keepadlived</span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nfs &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nfs.sh&quot;</span><br><span class="line">    interval 5</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 151</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">    auth_type PASS</span><br><span class="line">    auth_pass 1111</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">    chk_nfs</span><br><span class="line">&#125;</span><br><span class="line">notify_master /etc/keepalived/notify_master.sh</span><br><span class="line">notify_backup /etc/keepalived/notify_backup.sh</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">    10.3.31.103/24</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置文件中用到的脚本"><a href="#配置文件中用到的脚本" class="headerlink" title="配置文件中用到的脚本"></a>配置文件中用到的脚本</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/check_nfs.sh        <span class="comment">#给脚本主备服务都需要有</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">##检查nfs可用性：进程和是否能够挂载</span></span></span><br><span class="line">/sbin/service nfs status &amp;amp;&amp;gt;/dev/null</span><br><span class="line">if [ $? -ne 0 ];then</span><br><span class="line">    ###如果服务状态不正常，先尝试重启服务</span><br><span class="line">    systemctl restart nfs</span><br><span class="line">    systemctl status nfs &amp;amp;&amp;gt;/dev/null</span><br><span class="line">    if [ $? -ne 0 ];then</span><br><span class="line">        ###若重启nfs服务后，仍不正常</span><br><span class="line">        ###卸载drbd设备</span><br><span class="line">        umount /dev/drbd1</span><br><span class="line">        ###将drbd主降级为备</span><br><span class="line">        drbdadm secondary data</span><br><span class="line">        #关闭keepalived</span><br><span class="line">        /sbin/service keepalived stop</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_master.sh      <span class="comment">#主备服务器都有，用于设置主drdb</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time    ------notify_master------\n&quot; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/sbin/drbdadm primary data; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/bin/mount /dev/drbd1 /opt; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/sbin/service nfs restart; /etc/keepalived/logs/notify_master.log</span><br><span class="line">echo -e &quot;\n&quot; /etc/keepalived/logs/notify_master.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_stop.sh        <span class="comment">#只在主服务器上,用于停止主nfs</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time  ------notify_stop------\n&quot;; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/sbin/service nfs stop; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/bin/umount /opt; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/sbin/drbdadm secondary data; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">echo -e &quot;\n&quot;; /etc/keepalived/logs/notify_stop.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_backup.sh     <span class="comment">#用于设置主服务为备drbd</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time    ------notify_backup------\n&quot; /etc/keepalived/logs/notify_backup.log</span><br><span class="line">/sbin/service nfs stop</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">/bin/umount /dev/drbd1</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">/sbin/drbdadm secondary data</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">echo -e &quot;\n&quot; /etc/keepalived/logs/notify_backup.log</span><br></pre></td></tr></table></figure>
+<h4 id="自动切换测试"><a href="#自动切换测试" class="headerlink" title="自动切换测试"></a>自动切换测试</h4><p>关闭主上keepalived，会按照预期流程走。关闭主上nfs—-卸载资源设备—-主drbd降级—-备drdb升级—-备挂载资源设备—-备启动nfs服务。</p>
+<p>连续写测试，在客户端创建挂载点，然后挂载nfs,最后写入文件测试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir test</span><br><span class="line">mount -t nfs 10.3.31.103:/opt/upload test</span><br><span class="line">for i in &#123;1..500&#125;;do dd if=/dev/zero of=test/$i.file bs=1M count=1;done</span><br></pre></td></tr></table></figure>
+
+<p>执行循环的过程中在master上关闭keepalived，验证写入过程是否会中断，经验证(不能进入master的opt目录，否则master不能卸载opt)，写入过程没有中断，但中间会有一段时间的延时，在开启原主keepalived，写入过程也没有中断，同样中间有一段时间的延时,将测试文件删除，并卸载</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rm -fr test/*</span><br><span class="line">umount test</span><br></pre></td></tr></table></figure>
+<h4 id="正式挂载nfs，客户端需要安装rpcbind服务"><a href="#正式挂载nfs，客户端需要安装rpcbind服务" class="headerlink" title="正式挂载nfs，客户端需要安装rpcbind服务"></a>正式挂载nfs，客户端需要安装rpcbind服务</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ansible nfs -m yum -a &#x27;name=rpcbind,nfs-utils state=present&#x27;</span><br><span class="line">ansible nfs -m service -a &#x27;name=rpcbind state=restarted enabled=yes&#x27;</span><br><span class="line">ansible nfs -m file -a &#x27;path=/opt/data state=directory&#x27;</span><br><span class="line">ansible nfs -m shell -a &#x27;echo -e &quot;10.3.31.103:/opt/data/\t /opt/upload\t\t\tnfs\trw\t0 0&quot; /etc/fstab&#x27;</span><br><span class="line">ansible nfs -m shell -a &#x27;mount -a;mount&#x27;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    <!-- 文件位置：~/source/_data/post-body-end.swig -->
+
+<div>
+    
+        <div class="end-slogan" style="text-align:center;font-size:13px;letter-spacing:10px;user-select:none;color:#bbb;"><br/>本文结束啦<i class="fa fa-star"></i>感谢您阅读<br/><br/></div>
+    
+</div> 
+
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" rel="tag"><i class="fa fa-tag"></i> 高可用</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/8fa46076.html" rel="prev" title="Centos7使用kubeadm部署k8s集群">
+      <i class="fa fa-chevron-left"></i> Centos7使用kubeadm部署k8s集群
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">系统环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9hosts%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">修改hosts文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEdrbd"><span class="nav-number">3.</span> <span class="nav-text">配置drbd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5drbd%E6%A8%A1%E5%9D%97"><span class="nav-number">4.</span> <span class="nav-text">导入drbd模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%B0%E7%A1%AC%E7%9B%98sdb%EF%BC%8C%E5%B9%B6%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">添加新硬盘sdb，并初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">6.</span> <span class="nav-text">修改配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8drbd"><span class="nav-number">7.</span> <span class="nav-text">启动drbd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%BB%E8%8A%82%E7%82%B9%EF%BC%88%E5%8F%AA%E5%9C%A8%E4%B8%BB%E8%8A%82%E7%82%B9%E4%B8%8A%E6%93%8D%E4%BD%9C%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">初始化主节点（只在主节点上操作）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8master%E8%8A%82%E7%82%B9%E6%8C%82%E8%BD%BDdrbd1"><span class="nav-number">9.</span> <span class="nav-text">在master节点挂载drbd1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95drbd%E6%98%AF%E5%90%A6%E5%8F%AF%E7%94%A8"><span class="nav-number">10.</span> <span class="nav-text">测试drbd是否可用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEnfs%E6%9C%8D%E5%8A%A1%E7%AB%AF%EF%BC%8C%E4%B8%A4%E4%B8%AA%E8%8A%82%E7%82%B9%E9%83%BD%E8%A6%81%E6%89%A7%E8%A1%8C"><span class="nav-number">11.</span> <span class="nav-text">配置nfs服务端，两个节点都要执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEkeepalived"><span class="nav-number">12.</span> <span class="nav-text">安装配置keepalived</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BBdrbd%E8%8A%82%E7%82%B9%EF%BC%8810-3-31-101%EF%BC%89"><span class="nav-number">13.</span> <span class="nav-text">配置主drbd节点（10.3.31.101）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%A4%87drbd%E8%8A%82%E7%82%B9%EF%BC%8810-3-31-102%EF%BC%89"><span class="nav-number">14.</span> <span class="nav-text">配置备drbd节点（10.3.31.102）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%AD%E7%94%A8%E5%88%B0%E7%9A%84%E8%84%9A%E6%9C%AC"><span class="nav-number">15.</span> <span class="nav-text">配置文件中用到的脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E6%B5%8B%E8%AF%95"><span class="nav-number">16.</span> <span class="nav-text">自动切换测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E5%BC%8F%E6%8C%82%E8%BD%BDnfs%EF%BC%8C%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%9C%80%E8%A6%81%E5%AE%89%E8%A3%85rpcbind%E6%9C%8D%E5%8A%A1"><span class="nav-number">17.</span> <span class="nav-text">正式挂载nfs，客户端需要安装rpcbind服务</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="tanlay"
+      src="/images/pkq.jpg">
+  <p class="site-author-name" itemprop="name">tanlay</p>
+  <div class="site-description" itemprop="description">Tanlay的学习记录</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">37</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">36</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/tanlay" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;tanlay" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:18313178130@163.com" title="E-Mail → mailto:18313178130@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+<!--
+    <link rel="stylesheet" href="/dist/APlayer.min.css">
+    <div id="aplayer"></div>
+    <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+    <script type="text/javascript" src="/dist/music.js"></script>
+-->
+
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">滇ICP备2021004281号-1 </a>
+      <img src="/images/beian.png" style="display: inline-block;">
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tanlay</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">217k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:18</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-pjax@0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+    </div>
+
+	<!--引入aplayer-->
+    <link rel="stylesheet" href="/dist/APlayer.min.css">
+    <div id="aplayer"></div>
+    <script type="text/javascript" src="/dist/APlayer.min.js"></script>
+    <script type="text/javascript" src="/dist/music.js"></script>
+	<!--引入aplayer-->
+
+	<!--引入鼠标单击效果-->
+	
+	<!--引入鼠标单击效果-->
+
+</body>
+</html>
