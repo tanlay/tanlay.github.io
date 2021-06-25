@@ -17,13 +17,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"tanlay.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":8,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":8,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="LVM是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。通过LVM系统管理员可以轻松管理磁盘分区，如：将若干个磁盘分区连接为一个整块的卷组（volume group），形成一个存储池。管理员可以在卷组上随意创建逻辑卷组（logical volumes），并进一步在逻辑卷组上创建文件系统。管理员通过LVM可以方便的调整存储卷组的大小">
 <meta property="og:type" content="article">
 <meta property="og:title" content="磁盘分区挂载parted及LVM操作">
-<meta property="og:url" content="https://tanlay.cn/post/d90482da.html">
+<meta property="og:url" content="http://example.com/post/d90482da.html">
 <meta property="og:site_name" content="Tanlay">
 <meta property="og:description" content="LVM是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。通过LVM系统管理员可以轻松管理磁盘分区，如：将若干个磁盘分区连接为一个整块的卷组（volume group），形成一个存储池。管理员可以在卷组上随意创建逻辑卷组（logical volumes），并进一步在逻辑卷组上创建文件系统。管理员通过LVM可以方便的调整存储卷组的大小">
 <meta property="og:locale" content="zh_CN">
@@ -32,7 +32,7 @@
 <meta property="article:tag" content="LVM">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://tanlay.cn/post/d90482da.html">
+<link rel="canonical" href="http://example.com/post/d90482da.html">
 
 
 <script id="page-configurations">
@@ -195,7 +195,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tanlay.cn/post/d90482da.html">
+    <link itemprop="mainEntityOfPage" href="http://example.com/post/d90482da.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/pkq.jpg">
@@ -265,7 +265,7 @@
         <p>LVM是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。通过LVM系统管理员可以轻松管理磁盘分区，如：将若干个磁盘分区连接为一个整块的卷组（volume group），形成一个存储池。管理员可以在卷组上随意创建逻辑卷组（logical volumes），并进一步在逻辑卷组上创建文件系统。管理员通过LVM可以方便的调整存储卷组的大小，并且可以对磁盘存储按照组的方式进行命名、管理和分配。当系统添加了新的磁盘，通过LVM管理员就不必将磁盘的文件移动到新的磁盘上以充分利用新的存储空间，而是直接扩展文件系统跨越磁盘即可。</p>
 <span id="more"></span>
 
-<h4 id="新磁盘设置为LVM"><a href="#新磁盘设置为LVM" class="headerlink" title="新磁盘设置为LVM"></a>新磁盘设置为LVM</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">创建分区：fdisk /dev/sdb    ----&gt; /dev/sdb1</span><br><span class="line">创建pv：pvcreate /dev/sdb1</span><br><span class="line">查看pv：pvdispaly</span><br><span class="line">创建vg：vgcreate vg01 /dev/sdb1</span><br><span class="line">查看vg：vgdisplay</span><br><span class="line">创建LV：lvcreate -L 19G -n lvdata vg01</span><br><span class="line">查看lv：lvdisplay</span><br><span class="line">格式化为xfs：mkfs.xfs /dev/vg01/lvdata</span><br><span class="line">挂载：mount /dev/vg01/lvdata /opt/</span><br><span class="line">查看blkid：blkid /dev/vg01/lvdata </span><br><span class="line">	/dev/vg01/lvdata: UUID=&quot;dd0cc062-eaff-4e75-a4fe-ea8d7c5de66c&quot; TYPE=&quot;xfs&quot; </span><br><span class="line">开机挂载：把UUID文件xf按格式写入/etc/fatab文件</span><br></pre></td></tr></table></figure>
+<h4 id="新磁盘设置为LVM"><a href="#新磁盘设置为LVM" class="headerlink" title="新磁盘设置为LVM"></a>新磁盘设置为LVM</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">创建分区：fdisk /dev/sdb    ----&gt; /dev/sdb1</span><br><span class="line">创建pv：pvcreate /dev/sdb1</span><br><span class="line">查看pv：pvdispaly</span><br><span class="line">创建vg：vgcreate vg01 /dev/sdb1</span><br><span class="line">查看vg：vgdisplay</span><br><span class="line">创建LV：lvcreate -L 19G -n lvdata vg01</span><br><span class="line">查看lv：lvdisplay</span><br><span class="line">格式化为xfs：mkfs.xfs /dev/vg01/lvdata</span><br><span class="line">挂载：mount /dev/vg01/lvdata /opt/</span><br><span class="line">查看blkid：blkid /dev/vg01/lvdata </span><br><span class="line">\t/dev/vg01/lvdata: UUID=&quot;dd0cc062-eaff-4e75-a4fe-ea8d7c5de66c&quot; TYPE=&quot;xfs&quot; </span><br><span class="line">开机挂载：把UUID文件xf按格式写入/etc/fatab文件</span><br></pre></td></tr></table></figure>
 
 <h4 id="删除LVM逻辑卷"><a href="#删除LVM逻辑卷" class="headerlink" title="删除LVM逻辑卷"></a>删除LVM逻辑卷</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">取消挂载：umount /dev/vg01/lvdata</span><br><span class="line">取消逻辑卷lv：lvremove /dev/vg01/lvdata</span><br><span class="line">取消卷组：vgremove vg01</span><br><span class="line">取消物理卷：pvremove /dev/sdb1</span><br><span class="line">删除/etc/fstab文件相应的开机挂载信息</span><br></pre></td></tr></table></figure>
 
@@ -453,7 +453,7 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">217k</span>
+    <span title="站点总字数">218k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
