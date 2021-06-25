@@ -3,18 +3,18 @@
   <title>Tanlay</title>
   
   <subtitle>一口不能吃成胖子</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://tanlay.cn/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="https://tanlay.cn/"/>
   <updated>2021-06-24T08:04:14.980Z</updated>
-  <id>http://example.com/</id>
+  <id>https://tanlay.cn/</id>
   
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
     <title>DRBD+NFS+Keepalived高可用集群搭建</title>
-    <link href="http://example.com/post/9a21a8ea.html"/>
-    <id>http://example.com/post/9a21a8ea.html</id>
+    <link href="https://tanlay.cn/post/9a21a8ea.html"/>
+    <id>https://tanlay.cn/post/9a21a8ea.html</id>
     <published>2021-06-24T08:02:48.000Z</published>
     <updated>2021-06-24T08:04:14.980Z</updated>
     
@@ -23,17 +23,17 @@
     
     
     
-    <category term="文件系统" scheme="http://example.com/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
+    <category term="文件系统" scheme="https://tanlay.cn/categories/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
     
     
-    <category term="高可用" scheme="http://example.com/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    <category term="高可用" scheme="https://tanlay.cn/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
     
   </entry>
   
   <entry>
     <title>Centos7使用kubeadm部署k8s集群</title>
-    <link href="http://example.com/post/8fa46076.html"/>
-    <id>http://example.com/post/8fa46076.html</id>
+    <link href="https://tanlay.cn/post/8fa46076.html"/>
+    <id>https://tanlay.cn/post/8fa46076.html</id>
     <published>2021-06-19T11:20:00.000Z</published>
     <updated>2021-06-20T06:01:18.968Z</updated>
     
@@ -42,17 +42,17 @@
     
     
     
-    <category term="容器技术" scheme="http://example.com/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
+    <category term="容器技术" scheme="https://tanlay.cn/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
     
     
-    <category term="k8s" scheme="http://example.com/tags/k8s/"/>
+    <category term="k8s" scheme="https://tanlay.cn/tags/k8s/"/>
     
   </entry>
   
   <entry>
     <title>find命令常用操作</title>
-    <link href="http://example.com/post/825cbbd7.html"/>
-    <id>http://example.com/post/825cbbd7.html</id>
+    <link href="https://tanlay.cn/post/825cbbd7.html"/>
+    <id>https://tanlay.cn/post/825cbbd7.html</id>
     <published>2021-06-16T04:00:25.000Z</published>
     <updated>2021-06-16T04:01:42.521Z</updated>
     
@@ -61,19 +61,19 @@
     
     
     
-    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
+    <category term="系统管理" scheme="https://tanlay.cn/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
     
     
-    <category term="Linux" scheme="http://example.com/tags/Linux/"/>
+    <category term="Linux" scheme="https://tanlay.cn/tags/Linux/"/>
     
-    <category term="系统命令" scheme="http://example.com/tags/%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4/"/>
+    <category term="系统命令" scheme="https://tanlay.cn/tags/%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4/"/>
     
   </entry>
   
   <entry>
     <title>Postgresql96主从架构部署</title>
-    <link href="http://example.com/post/b9cacce1.html"/>
-    <id>http://example.com/post/b9cacce1.html</id>
+    <link href="https://tanlay.cn/post/b9cacce1.html"/>
+    <id>https://tanlay.cn/post/b9cacce1.html</id>
     <published>2021-06-11T07:17:42.000Z</published>
     <updated>2021-06-11T07:18:40.652Z</updated>
     
@@ -82,17 +82,17 @@
     
     
     
-    <category term="数据库" scheme="http://example.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    <category term="数据库" scheme="https://tanlay.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
     
-    <category term="Postgresql" scheme="http://example.com/tags/Postgresql/"/>
+    <category term="Postgresql" scheme="https://tanlay.cn/tags/Postgresql/"/>
     
   </entry>
   
   <entry>
     <title>Postgresql数据库脚本备份</title>
-    <link href="http://example.com/post/90c69e95.html"/>
-    <id>http://example.com/post/90c69e95.html</id>
+    <link href="https://tanlay.cn/post/90c69e95.html"/>
+    <id>https://tanlay.cn/post/90c69e95.html</id>
     <published>2021-06-11T07:10:07.000Z</published>
     <updated>2021-06-11T07:11:45.175Z</updated>
     
@@ -101,17 +101,17 @@
     
     
     
-    <category term="数据库" scheme="http://example.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    <category term="数据库" scheme="https://tanlay.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
     
-    <category term="Postgresql" scheme="http://example.com/tags/Postgresql/"/>
+    <category term="Postgresql" scheme="https://tanlay.cn/tags/Postgresql/"/>
     
   </entry>
   
   <entry>
     <title>Ansible使用记录</title>
-    <link href="http://example.com/post/45a1a923.html"/>
-    <id>http://example.com/post/45a1a923.html</id>
+    <link href="https://tanlay.cn/post/45a1a923.html"/>
+    <id>https://tanlay.cn/post/45a1a923.html</id>
     <published>2021-06-10T14:53:58.000Z</published>
     <updated>2021-06-11T07:20:42.168Z</updated>
     
@@ -120,17 +120,17 @@
     
     
     
-    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
+    <category term="系统管理" scheme="https://tanlay.cn/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
     
     
-    <category term="Ansible" scheme="http://example.com/tags/Ansible/"/>
+    <category term="Ansible" scheme="https://tanlay.cn/tags/Ansible/"/>
     
   </entry>
   
   <entry>
     <title>Docker实践</title>
-    <link href="http://example.com/post/eff924fc.html"/>
-    <id>http://example.com/post/eff924fc.html</id>
+    <link href="https://tanlay.cn/post/eff924fc.html"/>
+    <id>https://tanlay.cn/post/eff924fc.html</id>
     <published>2021-06-10T14:52:22.000Z</published>
     <updated>2021-06-10T14:53:35.833Z</updated>
     
@@ -139,17 +139,17 @@
     
     
     
-    <category term="容器技术" scheme="http://example.com/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
+    <category term="容器技术" scheme="https://tanlay.cn/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
     
     
-    <category term="Docker" scheme="http://example.com/tags/Docker/"/>
+    <category term="Docker" scheme="https://tanlay.cn/tags/Docker/"/>
     
   </entry>
   
   <entry>
     <title>Jenkins发布脚本</title>
-    <link href="http://example.com/post/d936a15c.html"/>
-    <id>http://example.com/post/d936a15c.html</id>
+    <link href="https://tanlay.cn/post/d936a15c.html"/>
+    <id>https://tanlay.cn/post/d936a15c.html</id>
     <published>2021-06-10T14:50:51.000Z</published>
     <updated>2021-06-11T07:19:57.239Z</updated>
     
@@ -158,19 +158,19 @@
     
     
     
-    <category term="Shell" scheme="http://example.com/categories/Shell/"/>
+    <category term="Shell" scheme="https://tanlay.cn/categories/Shell/"/>
     
     
-    <category term="Shell" scheme="http://example.com/tags/Shell/"/>
+    <category term="Shell" scheme="https://tanlay.cn/tags/Shell/"/>
     
-    <category term="Jenkins" scheme="http://example.com/tags/Jenkins/"/>
+    <category term="Jenkins" scheme="https://tanlay.cn/tags/Jenkins/"/>
     
   </entry>
   
   <entry>
     <title>Centos7安装K8S</title>
-    <link href="http://example.com/post/4c5b1a4b.html"/>
-    <id>http://example.com/post/4c5b1a4b.html</id>
+    <link href="https://tanlay.cn/post/4c5b1a4b.html"/>
+    <id>https://tanlay.cn/post/4c5b1a4b.html</id>
     <published>2021-06-10T14:49:42.000Z</published>
     <updated>2021-06-10T14:50:28.688Z</updated>
     
@@ -179,17 +179,17 @@
     
     
     
-    <category term="容器技术" scheme="http://example.com/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
+    <category term="容器技术" scheme="https://tanlay.cn/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
     
     
-    <category term="K8S" scheme="http://example.com/tags/K8S/"/>
+    <category term="K8S" scheme="https://tanlay.cn/tags/K8S/"/>
     
   </entry>
   
   <entry>
     <title>k8s-一个简单的例子</title>
-    <link href="http://example.com/post/d6261197.html"/>
-    <id>http://example.com/post/d6261197.html</id>
+    <link href="https://tanlay.cn/post/d6261197.html"/>
+    <id>https://tanlay.cn/post/d6261197.html</id>
     <published>2021-06-10T14:48:35.000Z</published>
     <updated>2021-06-10T14:49:12.669Z</updated>
     
@@ -198,17 +198,17 @@
     
     
     
-    <category term="容器技术" scheme="http://example.com/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
+    <category term="容器技术" scheme="https://tanlay.cn/categories/%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF/"/>
     
     
-    <category term="K8S" scheme="http://example.com/tags/K8S/"/>
+    <category term="K8S" scheme="https://tanlay.cn/tags/K8S/"/>
     
   </entry>
   
   <entry>
     <title>keepalived双网卡VIP同步漂移</title>
-    <link href="http://example.com/post/a817c57b.html"/>
-    <id>http://example.com/post/a817c57b.html</id>
+    <link href="https://tanlay.cn/post/a817c57b.html"/>
+    <id>https://tanlay.cn/post/a817c57b.html</id>
     <published>2021-06-10T14:47:09.000Z</published>
     <updated>2021-06-11T07:25:12.842Z</updated>
     
@@ -217,17 +217,17 @@
     
     
     
-    <category term="高可用" scheme="http://example.com/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    <category term="高可用" scheme="https://tanlay.cn/categories/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
     
     
-    <category term="Keepalived" scheme="http://example.com/tags/Keepalived/"/>
+    <category term="Keepalived" scheme="https://tanlay.cn/tags/Keepalived/"/>
     
   </entry>
   
   <entry>
     <title>Linux配置软件为系统服务</title>
-    <link href="http://example.com/post/adf79112.html"/>
-    <id>http://example.com/post/adf79112.html</id>
+    <link href="https://tanlay.cn/post/adf79112.html"/>
+    <id>https://tanlay.cn/post/adf79112.html</id>
     <published>2021-06-10T14:45:49.000Z</published>
     <updated>2021-06-11T07:26:42.594Z</updated>
     
@@ -236,17 +236,17 @@
     
     
     
-    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
+    <category term="系统管理" scheme="https://tanlay.cn/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
     
     
-    <category term="Shell" scheme="http://example.com/tags/Shell/"/>
+    <category term="Shell" scheme="https://tanlay.cn/tags/Shell/"/>
     
   </entry>
   
   <entry>
     <title>MySQL常用权限</title>
-    <link href="http://example.com/post/4f83a66c.html"/>
-    <id>http://example.com/post/4f83a66c.html</id>
+    <link href="https://tanlay.cn/post/4f83a66c.html"/>
+    <id>https://tanlay.cn/post/4f83a66c.html</id>
     <published>2021-06-10T14:44:50.000Z</published>
     <updated>2021-06-11T07:27:37.560Z</updated>
     
@@ -255,19 +255,19 @@
     
     
     
-    <category term="数据库" scheme="http://example.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    <category term="数据库" scheme="https://tanlay.cn/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
     
     
-    <category term="MySQL" scheme="http://example.com/tags/MySQL/"/>
+    <category term="MySQL" scheme="https://tanlay.cn/tags/MySQL/"/>
     
-    <category term="权限管理" scheme="http://example.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/"/>
+    <category term="权限管理" scheme="https://tanlay.cn/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/"/>
     
   </entry>
   
   <entry>
     <title>Redis哨兵集群部署</title>
-    <link href="http://example.com/post/7b9d5a10.html"/>
-    <id>http://example.com/post/7b9d5a10.html</id>
+    <link href="https://tanlay.cn/post/7b9d5a10.html"/>
+    <id>https://tanlay.cn/post/7b9d5a10.html</id>
     <published>2021-06-10T14:43:40.000Z</published>
     <updated>2021-06-11T07:29:24.906Z</updated>
     
@@ -276,19 +276,19 @@
     
     
     
-    <category term="缓存" scheme="http://example.com/categories/%E7%BC%93%E5%AD%98/"/>
+    <category term="缓存" scheme="https://tanlay.cn/categories/%E7%BC%93%E5%AD%98/"/>
     
     
-    <category term="NoSQL" scheme="http://example.com/tags/NoSQL/"/>
+    <category term="NoSQL" scheme="https://tanlay.cn/tags/NoSQL/"/>
     
-    <category term="Redis" scheme="http://example.com/tags/Redis/"/>
+    <category term="Redis" scheme="https://tanlay.cn/tags/Redis/"/>
     
   </entry>
   
   <entry>
     <title>RocketMQ双master集群部署</title>
-    <link href="http://example.com/post/dba5179c.html"/>
-    <id>http://example.com/post/dba5179c.html</id>
+    <link href="https://tanlay.cn/post/dba5179c.html"/>
+    <id>https://tanlay.cn/post/dba5179c.html</id>
     <published>2021-06-10T14:42:30.000Z</published>
     <updated>2021-06-11T07:29:51.980Z</updated>
     
@@ -297,19 +297,19 @@
     
     
     
-    <category term="消息队列" scheme="http://example.com/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
+    <category term="消息队列" scheme="https://tanlay.cn/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
     
     
-    <category term="RocketMQ" scheme="http://example.com/tags/RocketMQ/"/>
+    <category term="高可用" scheme="https://tanlay.cn/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
     
-    <category term="高可用" scheme="http://example.com/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/"/>
+    <category term="RocketMQ" scheme="https://tanlay.cn/tags/RocketMQ/"/>
     
   </entry>
   
   <entry>
     <title>vim常用配置</title>
-    <link href="http://example.com/post/2a71af52.html"/>
-    <id>http://example.com/post/2a71af52.html</id>
+    <link href="https://tanlay.cn/post/2a71af52.html"/>
+    <id>https://tanlay.cn/post/2a71af52.html</id>
     <published>2021-06-10T14:41:18.000Z</published>
     <updated>2021-06-11T07:30:39.240Z</updated>
     
@@ -318,17 +318,17 @@
     
     
     
-    <category term="编辑器" scheme="http://example.com/categories/%E7%BC%96%E8%BE%91%E5%99%A8/"/>
+    <category term="编辑器" scheme="https://tanlay.cn/categories/%E7%BC%96%E8%BE%91%E5%99%A8/"/>
     
     
-    <category term="VIM" scheme="http://example.com/tags/VIM/"/>
+    <category term="VIM" scheme="https://tanlay.cn/tags/VIM/"/>
     
   </entry>
   
   <entry>
     <title>磁盘分区挂载parted及LVM操作</title>
-    <link href="http://example.com/post/d90482da.html"/>
-    <id>http://example.com/post/d90482da.html</id>
+    <link href="https://tanlay.cn/post/d90482da.html"/>
+    <id>https://tanlay.cn/post/d90482da.html</id>
     <published>2021-06-10T14:39:53.000Z</published>
     <updated>2021-06-11T07:31:14.120Z</updated>
     
@@ -337,17 +337,17 @@
     
     
     
-    <category term="磁盘管理" scheme="http://example.com/categories/%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/"/>
+    <category term="磁盘管理" scheme="https://tanlay.cn/categories/%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/"/>
     
     
-    <category term="LVM" scheme="http://example.com/tags/LVM/"/>
+    <category term="LVM" scheme="https://tanlay.cn/tags/LVM/"/>
     
   </entry>
   
   <entry>
     <title>使用ansible部署ELK+Filebeat+kafka+Zookeeper</title>
-    <link href="http://example.com/post/6aeee3ef.html"/>
-    <id>http://example.com/post/6aeee3ef.html</id>
+    <link href="https://tanlay.cn/post/6aeee3ef.html"/>
+    <id>https://tanlay.cn/post/6aeee3ef.html</id>
     <published>2021-06-10T14:38:15.000Z</published>
     <updated>2021-06-11T07:30:51.278Z</updated>
     
@@ -356,21 +356,21 @@
     
     
     
-    <category term="ELK" scheme="http://example.com/categories/ELK/"/>
+    <category term="ELK" scheme="https://tanlay.cn/categories/ELK/"/>
     
     
-    <category term="Ansible" scheme="http://example.com/tags/Ansible/"/>
+    <category term="Ansible" scheme="https://tanlay.cn/tags/Ansible/"/>
     
-    <category term="Kafka" scheme="http://example.com/tags/Kafka/"/>
+    <category term="Kafka" scheme="https://tanlay.cn/tags/Kafka/"/>
     
-    <category term="Zookeeper" scheme="http://example.com/tags/Zookeeper/"/>
+    <category term="Zookeeper" scheme="https://tanlay.cn/tags/Zookeeper/"/>
     
   </entry>
   
   <entry>
     <title>Haproxy配置优化</title>
-    <link href="http://example.com/post/9d8f60de.html"/>
-    <id>http://example.com/post/9d8f60de.html</id>
+    <link href="https://tanlay.cn/post/9d8f60de.html"/>
+    <id>https://tanlay.cn/post/9d8f60de.html</id>
     <published>2021-06-10T14:36:22.000Z</published>
     <updated>2021-06-11T07:24:10.749Z</updated>
     
@@ -379,17 +379,17 @@
     
     
     
-    <category term="代理" scheme="http://example.com/categories/%E4%BB%A3%E7%90%86/"/>
+    <category term="代理" scheme="https://tanlay.cn/categories/%E4%BB%A3%E7%90%86/"/>
     
     
-    <category term="Haproxy" scheme="http://example.com/tags/Haproxy/"/>
+    <category term="Haproxy" scheme="https://tanlay.cn/tags/Haproxy/"/>
     
   </entry>
   
   <entry>
     <title>Centos7.2网卡bond</title>
-    <link href="http://example.com/post/278eb633.html"/>
-    <id>http://example.com/post/278eb633.html</id>
+    <link href="https://tanlay.cn/post/278eb633.html"/>
+    <id>https://tanlay.cn/post/278eb633.html</id>
     <published>2021-06-10T14:34:26.000Z</published>
     <updated>2021-06-11T07:20:30.221Z</updated>
     
@@ -398,10 +398,10 @@
     
     
     
-    <category term="系统管理" scheme="http://example.com/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
+    <category term="系统管理" scheme="https://tanlay.cn/categories/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"/>
     
     
-    <category term="网卡Bond" scheme="http://example.com/tags/%E7%BD%91%E5%8D%A1Bond/"/>
+    <category term="网卡Bond" scheme="https://tanlay.cn/tags/%E7%BD%91%E5%8D%A1Bond/"/>
     
   </entry>
   

@@ -498,6 +498,85 @@
       </tags>
   </entry>
   <entry>
+    <title>DRBD+NFS+Keepalived高可用集群搭建</title>
+    <url>/post/9a21a8ea.html</url>
+    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>使用NFS挂载文件时如何保证高可用？</p>
+<span id="more"></span>
+
+
+<h4 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h4><p>VIP：10.3.31.103</p>
+<table>
+<thead>
+<tr>
+<th align="center">服务器</th>
+<th align="center">主机名</th>
+<th align="center">IP地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">主nfs</td>
+<td align="center">nfs-master</td>
+<td align="center">10.3.31.101</td>
+</tr>
+<tr>
+<td align="center">从nfs</td>
+<td align="center">nfs-slave</td>
+<td align="center">10.3.31.102</td>
+</tr>
+</tbody></table>
+<h4 id="修改hosts文件"><a href="#修改hosts文件" class="headerlink" title="修改hosts文件"></a>修改hosts文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">echo -e &quot;10.3.31.101 nfs01.prod\n10.3.31.102 nfs02.prod&quot; &gt;&gt;/etc/hosts</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置drbd"><a href="#配置drbd" class="headerlink" title="配置drbd"></a>配置drbd</h4><p>安装drdb</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line">rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm</span><br><span class="line">yum install drbd84 kmod-drbd84 -y</span><br><span class="line">systemctl enable drbd</span><br></pre></td></tr></table></figure>
+
+<h4 id="导入drbd模块"><a href="#导入drbd模块" class="headerlink" title="导入drbd模块"></a>导入drbd模块</h4><p>内核模块需要大于3.10.0-514.6.1.el7.x86_64，否则会报错，如果报错了，先查看系统上的所有可用内核版本：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">awk -F\&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">yum --enablerepo=elrepo-kernel install kernel-ml     #升级内核</span><br><span class="line">modprobe drbd</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加新硬盘sdb，并初始化"><a href="#添加新硬盘sdb，并初始化" class="headerlink" title="添加新硬盘sdb，并初始化"></a>添加新硬盘sdb，并初始化</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">fdisk /dev/sdb           #新建一个分区sdb1</span><br><span class="line">mkfs.ext4 /dev/sdb1</span><br><span class="line">dd if=/dev/zero of=/dev/sdb1 bs=1M count=100</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/drbd.d/global_common.conf</span></span><br><span class="line">global &#123;</span><br><span class="line">    usage-count no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">common &#123;</span><br><span class="line">    protocol C;</span><br><span class="line">    disk &#123;</span><br><span class="line">        on-io-error detach;</span><br><span class="line">    &#125;</span><br><span class="line">    syncer &#123;</span><br><span class="line">        rate 100M;                    ##设置主备节点同步时的网络速率最大值</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">resource data &#123;</span><br><span class="line">    on nfs01.prod &#123;                    #主机名称</span><br><span class="line">        device /dev/drbd1;                     #drbd网络磁盘</span><br><span class="line">        disk /dev/sdb1;                        #本地需要挂载的磁盘</span><br><span class="line">        address 10.3.31.101:7899;              #主ip地址加drbd端口</span><br><span class="line">        meta-disk internal;</span><br><span class="line">    &#125;</span><br><span class="line">    on nfs02.prod &#123;</span><br><span class="line">        device /dev/drbd1;</span><br><span class="line">        disk /dev/sdb1;</span><br><span class="line">        address 10.3.31.102:7899;</span><br><span class="line">        meta-disk internal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动drbd"><a href="#启动drbd" class="headerlink" title="启动drbd"></a>启动drbd</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">drbdadm create-md data     #创建数据目录</span><br><span class="line">systemctl start drbd    #启动drbd服务</span><br><span class="line">systemctl enable drbd    #开机启动</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化主节点（只在主节点上操作）"><a href="#初始化主节点（只在主节点上操作）" class="headerlink" title="初始化主节点（只在主节点上操作）"></a>初始化主节点（只在主节点上操作）</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">drbdadm primary --force data</span><br><span class="line">drbdsetup /dev/drbd1 primary</span><br></pre></td></tr></table></figure>
+
+<h4 id="在master节点挂载drbd1"><a href="#在master节点挂载drbd1" class="headerlink" title="在master节点挂载drbd1"></a>在master节点挂载drbd1</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/drbd1</span><br><span class="line">mount /dev/drbd1 /opt/</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试drbd是否可用"><a href="#测试drbd是否可用" class="headerlink" title="测试drbd是否可用"></a>测试drbd是否可用</h4><p>在master(10.3.31.101)的opt中创建一个文件，然后卸载/opt，将当前主节点降级为次</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir /opt/test</span><br><span class="line">umount /opt</span><br><span class="line">drbdadm secondary data</span><br></pre></td></tr></table></figure>
+<p>将secondary(10.3.31.102)节点升级为主节点，然后挂载/opt，可用看到在10.2.31.51上创建的文件test存在，说明drbd起作用了</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">drbdadm primary data</span><br><span class="line">mount /dev/drbd1 /opt/</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置nfs服务端，两个节点都要执行"><a href="#配置nfs服务端，两个节点都要执行" class="headerlink" title="配置nfs服务端，两个节点都要执行"></a>配置nfs服务端，两个节点都要执行</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum -y install rpcbind nfs-utils</span><br><span class="line">mkdir -p /opt/logs/upload  /opt/data/pfxfiles /opt/upload</span><br><span class="line">echo -e &quot;/opt/logs/itsp-uploadlog  10.3.31.0/24(rw,no_root_squash,sync)\n/opt/upload 10.3.31.0/24(rw,no_root_squash,sync)\n/opt/data/pfxfiles 10.3.31.0/24(rw,no_root_squash,sync)&quot; &amp;gt;&amp;gt; /etc/exports</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装配置keepalived"><a href="#安装配置keepalived" class="headerlink" title="安装配置keepalived"></a>安装配置keepalived</h4><p>安装keepalived</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum -y install keepalived</span><br><span class="line">systemctl enable keepalived</span><br><span class="line">mkdir /et/keepalived/logs     #创建日志目录</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置主drbd节点（10-3-31-101）"><a href="#配置主drbd节点（10-3-31-101）" class="headerlink" title="配置主drbd节点（10.3.31.101）"></a>配置主drbd节点（10.3.31.101）</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File for keepadlived</span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nfs &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nfs.sh&quot;</span><br><span class="line">    interval 5</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 151</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">    auth_type PASS</span><br><span class="line">    auth_pass 1111</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">    chk_nfs</span><br><span class="line">&#125;</span><br><span class="line">notify_stop /etc/keepalived/notify_stop.sh</span><br><span class="line">notify_master /etc/keepalived/notify_master.sh</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">    10.3.31.103/24</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置备drbd节点（10-3-31-102）"><a href="#配置备drbd节点（10-3-31-102）" class="headerlink" title="配置备drbd节点（10.3.31.102）"></a>配置备drbd节点（10.3.31.102）</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File for keepadlived</span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nfs &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nfs.sh&quot;</span><br><span class="line">    interval 5</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 151</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">    auth_type PASS</span><br><span class="line">    auth_pass 1111</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">    chk_nfs</span><br><span class="line">&#125;</span><br><span class="line">notify_master /etc/keepalived/notify_master.sh</span><br><span class="line">notify_backup /etc/keepalived/notify_backup.sh</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">    10.3.31.103/24</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置文件中用到的脚本"><a href="#配置文件中用到的脚本" class="headerlink" title="配置文件中用到的脚本"></a>配置文件中用到的脚本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/check_nfs.sh        <span class="comment">#给脚本主备服务都需要有</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">##检查nfs可用性：进程和是否能够挂载</span></span></span><br><span class="line">/sbin/service nfs status &amp;amp;&amp;gt;/dev/null</span><br><span class="line">if [ $? -ne 0 ];then</span><br><span class="line">    ###如果服务状态不正常，先尝试重启服务</span><br><span class="line">    systemctl restart nfs</span><br><span class="line">    systemctl status nfs &amp;amp;&amp;gt;/dev/null</span><br><span class="line">    if [ $? -ne 0 ];then</span><br><span class="line">        ###若重启nfs服务后，仍不正常</span><br><span class="line">        ###卸载drbd设备</span><br><span class="line">        umount /dev/drbd1</span><br><span class="line">        ###将drbd主降级为备</span><br><span class="line">        drbdadm secondary data</span><br><span class="line">        #关闭keepalived</span><br><span class="line">        /sbin/service keepalived stop</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_master.sh      <span class="comment">#主备服务器都有，用于设置主drdb</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time    ------notify_master------\n&quot; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/sbin/drbdadm primary data; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/bin/mount /dev/drbd1 /opt; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/sbin/service nfs restart; /etc/keepalived/logs/notify_master.log</span><br><span class="line">echo -e &quot;\n&quot; /etc/keepalived/logs/notify_master.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_stop.sh        <span class="comment">#只在主服务器上,用于停止主nfs</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time  ------notify_stop------\n&quot;; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/sbin/service nfs stop; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/bin/umount /opt; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/sbin/drbdadm secondary data; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">echo -e &quot;\n&quot;; /etc/keepalived/logs/notify_stop.log</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_backup.sh     <span class="comment">#用于设置主服务为备drbd</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time    ------notify_backup------\n&quot; /etc/keepalived/logs/notify_backup.log</span><br><span class="line">/sbin/service nfs stop</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">/bin/umount /dev/drbd1</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">/sbin/drbdadm secondary data</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">echo -e &quot;\n&quot; /etc/keepalived/logs/notify_backup.log</span><br></pre></td></tr></table></figure>
+<h4 id="自动切换测试"><a href="#自动切换测试" class="headerlink" title="自动切换测试"></a>自动切换测试</h4><p>关闭主上keepalived，会按照预期流程走。关闭主上nfs—-卸载资源设备—-主drbd降级—-备drdb升级—-备挂载资源设备—-备启动nfs服务。</p>
+<p>连续写测试，在客户端创建挂载点，然后挂载nfs,最后写入文件测试</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir test</span><br><span class="line">mount -t nfs 10.3.31.103:/opt/upload test</span><br><span class="line">for i in &#123;1..500&#125;;do dd if=/dev/zero of=test/$i.file bs=1M count=1;done</span><br></pre></td></tr></table></figure>
+
+<p>执行循环的过程中在master上关闭keepalived，验证写入过程是否会中断，经验证(不能进入master的opt目录，否则master不能卸载opt)，写入过程没有中断，但中间会有一段时间的延时，在开启原主keepalived，写入过程也没有中断，同样中间有一段时间的延时,将测试文件删除，并卸载</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rm -fr test/*</span><br><span class="line">umount test</span><br></pre></td></tr></table></figure>
+<h4 id="正式挂载nfs，客户端需要安装rpcbind服务"><a href="#正式挂载nfs，客户端需要安装rpcbind服务" class="headerlink" title="正式挂载nfs，客户端需要安装rpcbind服务"></a>正式挂载nfs，客户端需要安装rpcbind服务</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ansible nfs -m yum -a &#x27;name=rpcbind,nfs-utils state=present&#x27;</span><br><span class="line">ansible nfs -m service -a &#x27;name=rpcbind state=restarted enabled=yes&#x27;</span><br><span class="line">ansible nfs -m file -a &#x27;path=/opt/data state=directory&#x27;</span><br><span class="line">ansible nfs -m shell -a &#x27;echo -e &quot;10.3.31.103:/opt/data/\t /opt/upload\t\t\tnfs\trw\t0 0&quot; /etc/fstab&#x27;</span><br><span class="line">ansible nfs -m shell -a &#x27;mount -a;mount&#x27;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>文件系统</category>
+      </categories>
+      <tags>
+        <tag>高可用</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Dockerfile实践</title>
     <url>/post/1ef71e38.html</url>
     <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>Dockerfile用于快速创建自定义镜像的一种文本格式的配置文件，在CICD时，需要使用Dockerfile生成相关应用程序镜像，推送至公司内部仓库中，然后在通过部署策略部署到k8s集群中。</p>
@@ -1291,8 +1370,8 @@
         <category>消息队列</category>
       </categories>
       <tags>
-        <tag>RocketMQ</tag>
         <tag>高可用</tag>
+        <tag>RocketMQ</tag>
       </tags>
   </entry>
   <entry>
@@ -2643,85 +2722,6 @@
       </categories>
       <tags>
         <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>DRBD+NFS+Keepalived高可用集群搭建</title>
-    <url>/post/9a21a8ea.html</url>
-    <content><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><p>使用NFS挂载文件时如何保证高可用？</p>
-<span id="more"></span>
-
-
-<h4 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h4><p>VIP：10.3.31.103</p>
-<table>
-<thead>
-<tr>
-<th align="center">服务器</th>
-<th align="center">主机名</th>
-<th align="center">IP地址</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">主nfs</td>
-<td align="center">nfs-master</td>
-<td align="center">10.3.31.101</td>
-</tr>
-<tr>
-<td align="center">从nfs</td>
-<td align="center">nfs-slave</td>
-<td align="center">10.3.31.102</td>
-</tr>
-</tbody></table>
-<h4 id="修改hosts文件"><a href="#修改hosts文件" class="headerlink" title="修改hosts文件"></a>修改hosts文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">echo -e &quot;10.3.31.101 nfs01.prod\n10.3.31.102 nfs02.prod&quot; &gt;&gt;/etc/hosts</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置drbd"><a href="#配置drbd" class="headerlink" title="配置drbd"></a>配置drbd</h4><p>安装drdb</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org</span><br><span class="line">rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm</span><br><span class="line">yum install drbd84 kmod-drbd84 -y</span><br><span class="line">systemctl enable drbd</span><br></pre></td></tr></table></figure>
-
-<h4 id="导入drbd模块"><a href="#导入drbd模块" class="headerlink" title="导入drbd模块"></a>导入drbd模块</h4><p>内核模块需要大于3.10.0-514.6.1.el7.x86_64，否则会报错，如果报错了，先查看系统上的所有可用内核版本：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">awk -F\&#x27; &#x27;$1==&quot;menuentry &quot; &#123;print i++ &quot; : &quot; $2&#125;&#x27; /etc/grub2.cfg</span><br><span class="line">yum --enablerepo=elrepo-kernel install kernel-ml     #升级内核</span><br><span class="line">modprobe drbd</span><br></pre></td></tr></table></figure>
-
-<h4 id="添加新硬盘sdb，并初始化"><a href="#添加新硬盘sdb，并初始化" class="headerlink" title="添加新硬盘sdb，并初始化"></a>添加新硬盘sdb，并初始化</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">fdisk /dev/sdb           #新建一个分区sdb1</span><br><span class="line">mkfs.ext4 /dev/sdb1</span><br><span class="line">dd if=/dev/zero of=/dev/sdb1 bs=1M count=100</span><br></pre></td></tr></table></figure>
-
-<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/drbd.d/global_common.conf</span></span><br><span class="line">global &#123;</span><br><span class="line">    usage-count no;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">common &#123;</span><br><span class="line">    protocol C;</span><br><span class="line">    disk &#123;</span><br><span class="line">        on-io-error detach;</span><br><span class="line">    &#125;</span><br><span class="line">    syncer &#123;</span><br><span class="line">        rate 100M;                    ##设置主备节点同步时的网络速率最大值</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">resource data &#123;</span><br><span class="line">    on nfs01.prod &#123;                    #主机名称</span><br><span class="line">        device /dev/drbd1;                     #drbd网络磁盘</span><br><span class="line">        disk /dev/sdb1;                        #本地需要挂载的磁盘</span><br><span class="line">        address 10.3.31.101:7899;              #主ip地址加drbd端口</span><br><span class="line">        meta-disk internal;</span><br><span class="line">    &#125;</span><br><span class="line">    on nfs02.prod &#123;</span><br><span class="line">        device /dev/drbd1;</span><br><span class="line">        disk /dev/sdb1;</span><br><span class="line">        address 10.3.31.102:7899;</span><br><span class="line">        meta-disk internal;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="启动drbd"><a href="#启动drbd" class="headerlink" title="启动drbd"></a>启动drbd</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">drbdadm create-md data     #创建数据目录</span><br><span class="line">systemctl start drbd    #启动drbd服务</span><br><span class="line">systemctl enable drbd    #开机启动</span><br></pre></td></tr></table></figure>
-
-<h4 id="初始化主节点（只在主节点上操作）"><a href="#初始化主节点（只在主节点上操作）" class="headerlink" title="初始化主节点（只在主节点上操作）"></a>初始化主节点（只在主节点上操作）</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">drbdadm primary --force data</span><br><span class="line">drbdsetup /dev/drbd1 primary</span><br></pre></td></tr></table></figure>
-
-<h4 id="在master节点挂载drbd1"><a href="#在master节点挂载drbd1" class="headerlink" title="在master节点挂载drbd1"></a>在master节点挂载drbd1</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkfs.ext4 /dev/drbd1</span><br><span class="line">mount /dev/drbd1 /opt/</span><br></pre></td></tr></table></figure>
-
-<h4 id="测试drbd是否可用"><a href="#测试drbd是否可用" class="headerlink" title="测试drbd是否可用"></a>测试drbd是否可用</h4><p>在master(10.3.31.101)的opt中创建一个文件，然后卸载/opt，将当前主节点降级为次</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir /opt/test</span><br><span class="line">umount /opt</span><br><span class="line">drbdadm secondary data</span><br></pre></td></tr></table></figure>
-<p>将secondary(10.3.31.102)节点升级为主节点，然后挂载/opt，可用看到在10.2.31.51上创建的文件test存在，说明drbd起作用了</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">drbdadm primary data</span><br><span class="line">mount /dev/drbd1 /opt/</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置nfs服务端，两个节点都要执行"><a href="#配置nfs服务端，两个节点都要执行" class="headerlink" title="配置nfs服务端，两个节点都要执行"></a>配置nfs服务端，两个节点都要执行</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum -y install rpcbind nfs-utils</span><br><span class="line">mkdir -p /opt/logs/upload  /opt/data/pfxfiles /opt/upload</span><br><span class="line">echo -e &quot;/opt/logs/itsp-uploadlog  10.3.31.0/24(rw,no_root_squash,sync)\n/opt/upload 10.3.31.0/24(rw,no_root_squash,sync)\n/opt/data/pfxfiles 10.3.31.0/24(rw,no_root_squash,sync)&quot; &amp;gt;&amp;gt; /etc/exports</span><br></pre></td></tr></table></figure>
-
-<h4 id="安装配置keepalived"><a href="#安装配置keepalived" class="headerlink" title="安装配置keepalived"></a>安装配置keepalived</h4><p>安装keepalived</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum -y install keepalived</span><br><span class="line">systemctl enable keepalived</span><br><span class="line">mkdir /et/keepalived/logs     #创建日志目录</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置主drbd节点（10-3-31-101）"><a href="#配置主drbd节点（10-3-31-101）" class="headerlink" title="配置主drbd节点（10.3.31.101）"></a>配置主drbd节点（10.3.31.101）</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File for keepadlived</span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nfs &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nfs.sh&quot;</span><br><span class="line">    interval 5</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 151</span><br><span class="line">    priority 100</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">    auth_type PASS</span><br><span class="line">    auth_pass 1111</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">    chk_nfs</span><br><span class="line">&#125;</span><br><span class="line">notify_stop /etc/keepalived/notify_stop.sh</span><br><span class="line">notify_master /etc/keepalived/notify_master.sh</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">    10.3.31.103/24</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置备drbd节点（10-3-31-102）"><a href="#配置备drbd节点（10-3-31-102）" class="headerlink" title="配置备drbd节点（10.3.31.102）"></a>配置备drbd节点（10.3.31.102）</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/keepalived.conf</span></span><br><span class="line">! Configuration File for keepadlived</span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id LVS_DEVEL</span><br><span class="line">&#125;</span><br><span class="line">vrrp_script chk_nfs &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nfs.sh&quot;</span><br><span class="line">    interval 5</span><br><span class="line">&#125;</span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 151</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">    auth_type PASS</span><br><span class="line">    auth_pass 1111</span><br><span class="line">&#125;</span><br><span class="line">track_script &#123;</span><br><span class="line">    chk_nfs</span><br><span class="line">&#125;</span><br><span class="line">notify_master /etc/keepalived/notify_master.sh</span><br><span class="line">notify_backup /etc/keepalived/notify_backup.sh</span><br><span class="line">virtual_ipaddress &#123;</span><br><span class="line">    10.3.31.103/24</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="配置文件中用到的脚本"><a href="#配置文件中用到的脚本" class="headerlink" title="配置文件中用到的脚本"></a>配置文件中用到的脚本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/check_nfs.sh        <span class="comment">#给脚本主备服务都需要有</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">##检查nfs可用性：进程和是否能够挂载</span></span></span><br><span class="line">/sbin/service nfs status &amp;amp;&amp;gt;/dev/null</span><br><span class="line">if [ $? -ne 0 ];then</span><br><span class="line">    ###如果服务状态不正常，先尝试重启服务</span><br><span class="line">    systemctl restart nfs</span><br><span class="line">    systemctl status nfs &amp;amp;&amp;gt;/dev/null</span><br><span class="line">    if [ $? -ne 0 ];then</span><br><span class="line">        ###若重启nfs服务后，仍不正常</span><br><span class="line">        ###卸载drbd设备</span><br><span class="line">        umount /dev/drbd1</span><br><span class="line">        ###将drbd主降级为备</span><br><span class="line">        drbdadm secondary data</span><br><span class="line">        #关闭keepalived</span><br><span class="line">        /sbin/service keepalived stop</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_master.sh      <span class="comment">#主备服务器都有，用于设置主drdb</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time    ------notify_master------\n&quot; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/sbin/drbdadm primary data; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/bin/mount /dev/drbd1 /opt; /etc/keepalived/logs/notify_master.log</span><br><span class="line">/sbin/service nfs restart; /etc/keepalived/logs/notify_master.log</span><br><span class="line">echo -e &quot;\n&quot; /etc/keepalived/logs/notify_master.log</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_stop.sh        <span class="comment">#只在主服务器上,用于停止主nfs</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time  ------notify_stop------\n&quot;; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/sbin/service nfs stop; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/bin/umount /opt; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">/sbin/drbdadm secondary data; /etc/keepalived/logs/notify_stop.log</span><br><span class="line">echo -e &quot;\n&quot;; /etc/keepalived/logs/notify_stop.log</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> cat /etc/keepalived/notify_backup.sh     <span class="comment">#用于设置主服务为备drbd</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">time=`date &quot;+%F  %H:%M:%S&quot;`</span><br><span class="line">echo -e &quot;$time    ------notify_backup------\n&quot; /etc/keepalived/logs/notify_backup.log</span><br><span class="line">/sbin/service nfs stop</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">/bin/umount /dev/drbd1</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">/sbin/drbdadm secondary data</span><br><span class="line">/etc/keepalived/logs/notify_backup.log</span><br><span class="line">echo -e &quot;\n&quot; /etc/keepalived/logs/notify_backup.log</span><br></pre></td></tr></table></figure>
-<h4 id="自动切换测试"><a href="#自动切换测试" class="headerlink" title="自动切换测试"></a>自动切换测试</h4><p>关闭主上keepalived，会按照预期流程走。关闭主上nfs—-卸载资源设备—-主drbd降级—-备drdb升级—-备挂载资源设备—-备启动nfs服务。</p>
-<p>连续写测试，在客户端创建挂载点，然后挂载nfs,最后写入文件测试</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mkdir test</span><br><span class="line">mount -t nfs 10.3.31.103:/opt/upload test</span><br><span class="line">for i in &#123;1..500&#125;;do dd if=/dev/zero of=test/$i.file bs=1M count=1;done</span><br></pre></td></tr></table></figure>
-
-<p>执行循环的过程中在master上关闭keepalived，验证写入过程是否会中断，经验证(不能进入master的opt目录，否则master不能卸载opt)，写入过程没有中断，但中间会有一段时间的延时，在开启原主keepalived，写入过程也没有中断，同样中间有一段时间的延时,将测试文件删除，并卸载</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">rm -fr test/*</span><br><span class="line">umount test</span><br></pre></td></tr></table></figure>
-<h4 id="正式挂载nfs，客户端需要安装rpcbind服务"><a href="#正式挂载nfs，客户端需要安装rpcbind服务" class="headerlink" title="正式挂载nfs，客户端需要安装rpcbind服务"></a>正式挂载nfs，客户端需要安装rpcbind服务</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ansible nfs -m yum -a &#x27;name=rpcbind,nfs-utils state=present&#x27;</span><br><span class="line">ansible nfs -m service -a &#x27;name=rpcbind state=restarted enabled=yes&#x27;</span><br><span class="line">ansible nfs -m file -a &#x27;path=/opt/data state=directory&#x27;</span><br><span class="line">ansible nfs -m shell -a &#x27;echo -e &quot;10.3.31.103:/opt/data/\t /opt/upload\t\t\tnfs\trw\t0 0&quot; /etc/fstab&#x27;</span><br><span class="line">ansible nfs -m shell -a &#x27;mount -a;mount&#x27;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>文件系统</category>
-      </categories>
-      <tags>
-        <tag>高可用</tag>
       </tags>
   </entry>
 </search>
